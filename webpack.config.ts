@@ -1,11 +1,10 @@
-import * as webpack from "webpack"
-import * as path from 'path'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const src  = path.resolve(__dirname, 'src')
 const dist = path.resolve(__dirname, 'dist')
 
-const config: webpack.Configuration = {
+const config = {
   entry: src + '/index.tsx',
   output: {
     path: dist,
@@ -17,6 +16,7 @@ const config: webpack.Configuration = {
       {
         test: /\.(ts|tsx)$/,
         use: [
+          {loader: 'babel-loader'},
           {loader: 'ts-loader'}
         ]
       }
@@ -38,4 +38,4 @@ const config: webpack.Configuration = {
   }
 }
 
-export default config
+module.exports = config

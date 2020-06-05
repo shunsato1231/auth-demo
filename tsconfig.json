@@ -3,13 +3,14 @@
     "baseUrl": "./",
     "target": "es5",
     "strict": true,
-    "module": "commonjs",
-    "jsx": "react",
+    "module": "ESNext",
+    "jsx": "preserve",
     "lib": [
       "es5",
       "es6",
       "dom",
     ],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   }
 }
