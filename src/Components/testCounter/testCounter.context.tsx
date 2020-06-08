@@ -1,4 +1,4 @@
-import React, { createContext } from 'react'
+import React, { createContext, useContext } from 'react'
 import useCounter from './testCounter.hook'
  
 // set context type
@@ -15,7 +15,8 @@ const defaultContext: CounterContextType = {
   decrement: () => {}
 }
 
-export const CounterContext = createContext<CounterContextType>(defaultContext)
+const CounterContext = createContext<CounterContextType>(defaultContext)
+export const useCounterContext = () => useContext(CounterContext)
 
 type Props = {
     children: React.ReactNode

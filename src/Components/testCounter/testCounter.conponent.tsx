@@ -1,18 +1,18 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { css } from '@emotion/core'
 
-import { CounterContext } from './testCounter.context'
+import { useCounterContext } from './testCounter.context'
 
 interface DisplayProps {
     initialCount?: number
 }
 
 export const TestCounterDisplay: React.SFC<DisplayProps> = () => {
-  const counterCtx = useContext(CounterContext)
+  const counterCtx = useCounterContext()
 
     return (
       <div 
-          data-testid='count'
+          data-testid='display'
           css={counter}
       >
           {counterCtx.count}
@@ -21,7 +21,7 @@ export const TestCounterDisplay: React.SFC<DisplayProps> = () => {
 }
 
 export const TestCounterButton: React.SFC = () => {
-  const counterCtx = useContext(CounterContext)
+  const counterCtx = useCounterContext()
 
   return (
     <div>
@@ -30,14 +30,14 @@ export const TestCounterButton: React.SFC = () => {
           css={minusButton}
           onClick={() => counterCtx.decrement()}
       >
-          Minus
+          -1
       </button>
       <button 
           data-testid='incrementButton'
-          css={addButton}
+          css={plusButton}
           onClick={() => counterCtx.increment()}
       >
-          Add
+          +1
       </button>
     </div>
   )
@@ -59,7 +59,7 @@ const button = css`
   outline: none;
 `
 
-const addButton = css`
+const plusButton = css`
   ${button};
   background: #23B036;
   border-radius: 0 5px 5px 0;

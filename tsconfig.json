@@ -4,7 +4,7 @@
     "importHelpers": true,
     "declaration": true,
     "declarationDir": "dist",
-    "target": "esnext",
+    "target": "ES2018",
     "module": "esnext",
     "jsx": "preserve",
     "moduleResolution": "node",

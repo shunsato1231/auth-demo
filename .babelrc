@@ -4,7 +4,11 @@
       "@babel/preset-react",
       "@emotion/babel-preset-css-prop"
   ],
+  "plugins": ["emotion"],
   "env": {
+    "production": {
+      "plugins": ["babel-plugin-jsx-remove-data-test-id"]
+    },
     "test": {
       "presets": [["@babel/preset-env", {"targets": {"node": "current"}}]]
     }
