@@ -19,6 +19,15 @@ const config = {
           {loader: 'babel-loader'},
           {loader: 'ts-loader'}
         ]
+      },
+      {
+        test: /\.styl$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-modules-typescript-loader"},
+          { loader: "css-loader", options: { modules: true } },
+          { loader: "stylus-loader" }
+        ]
       }
     ]
   },

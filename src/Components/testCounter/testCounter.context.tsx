@@ -18,15 +18,12 @@ const defaultContext: CounterContextType = {
 const CounterContext = createContext<CounterContextType>(defaultContext)
 export const useCounterContext = () => useContext(CounterContext)
 
-type Props = {
-    children: React.ReactNode
-}
-export const CounterProvider: React.FC<Props> = (props) => {
+export const CounterProvider: React.SFC = ({children}) => {
     const ctx = useCounter();
 
     return (
         <CounterContext.Provider value={ctx}>
-            {props.children}
+            {children}
         </CounterContext.Provider>
     )
 }
