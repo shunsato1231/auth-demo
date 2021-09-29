@@ -24,7 +24,7 @@ const config = {
         test: /\.styl$/,
         use: [
           { loader: "style-loader" },
-          { loader: "css-modules-typescript-loader"},
+          { loader: "css-modules-typescript-loader" },
           { loader: "css-loader", options: { modules: true } },
           { loader: "stylus-loader" }
         ]
@@ -42,7 +42,9 @@ const config = {
   ],
   devServer: {
     historyApiFallback: true,
-    contentBase: dist,
+    static: {
+      directory: dist,
+    },
     host: '0.0.0.0'
   }
 }

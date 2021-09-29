@@ -2,7 +2,7 @@ import React from 'react'
 import { TestCounterDisplay, TestCounterButton } from './Components/testCounter/testCounter.conponent'
 import { CounterProvider } from './Components/testCounter/testCounter.context'
 
-const styles = require('./App.style.styl')
+import styles from './App.style.styl'
 
 const App: React.SFC = () => {
 

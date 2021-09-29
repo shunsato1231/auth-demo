@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useCounterContext } from './testCounter.context'
-const styles = require('./testCounter.style.styl')
+import styles from './testCounter.style.styl'
 
 interface DisplayProps {
     initialCount?: number
@@ -13,7 +13,7 @@ export const TestCounterDisplay: React.SFC<DisplayProps> = () => {
 
     return (
       <div 
-           className={styles.counter}
+          className={styles.counter}
           data-testid='display'
       >
           {counterCtx.count}
