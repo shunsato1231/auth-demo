@@ -3,6 +3,8 @@ import React from 'react'
 import { useCounterContext } from './testCounter.context'
 import styles from './testCounter.style.styl'
 
+import Button from '@mui/material/Button'
+
 interface DisplayProps {
     initialCount?: number
 }
@@ -27,20 +29,26 @@ export const TestCounterButton: React.SFC = () => {
 
   return (
     <div>
-      <button 
+      <Button 
           data-testid='decrementButton'
-          className={styles.minusButton}
           onClick={() => counterCtx.decrement()}
+          variant="contained"
+          sx={{
+            mr: 1
+          }}
       >
           -1
-      </button>
-      <button 
+      </Button>
+      <Button 
           data-testid='incrementButton'
-          className={styles.plusButton}
           onClick={() => counterCtx.increment()}
+          variant="contained"
+          sx={{
+            ml: 0
+          }}
       >
           +1
-      </button>
+      </Button>
     </div>
   )
 }
