@@ -1,26 +1,15 @@
 import React from 'react'
-
 import { CssBaseline } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import defaultTheme from './Theme/default'
+import defaultTheme from './theme/default'
 
-import { TestCounterDisplay, TestCounterButton } from './Components/testCounter/testCounter.conponent'
-import { CounterProvider } from './Components/testCounter/testCounter.context'
+import { Login } from './pages/Login'
 
-import styles from './App.style.styl'
-
-const App: React.SFC = () => {
-
+const App: React.FC = () => {
   return(
     <ThemeProvider theme={defaultTheme}>
-      <CounterProvider>
-        <CssBaseline />
-        <div className={styles.wrapper}>
-          <h2 className={styles.heading}> count number </h2>
-          <TestCounterDisplay/>
-          <TestCounterButton/>
-        </div>
-      </CounterProvider>
+      <CssBaseline />
+      <Login />
     </ThemeProvider>
   )
 }
