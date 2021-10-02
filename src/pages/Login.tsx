@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react';
+import {useFormMui} from '../hooks/useFormMui.hook'
+
 import {
   Container,
   Typography,
@@ -6,10 +8,30 @@ import {
   Card,
   Grid,
   TextField,
-  Button
+  Button,
+  InputAdornment,
+  IconButton
 } from '@mui/material'
 
+import {
+  Visibility,
+  VisibilityOff
+} from '@mui/icons-material';
+
+import {classes} from '../theme/default'
+import {regex} from '../utils/regex'
+
 export const Login: React.FC = (): JSX.Element => {
+  const { handleSubmit, register, formState: { errors }, watch }
+    = useFormMui({mode: 'onTouched'});
+
+  const watchEmail = watch('email')
+  const watchPassword = watch('password')
+  const [showPassword, setShowPassword] = useState(false)
+
+  const onSubmit = (data, e) => console.log(data, e);
+  const onError = (errors, e) => console.log(errors, e);
+
   return (
     <Container
       sx={{
@@ -53,42 +75,82 @@ export const Login: React.FC = (): JSX.Element => {
             },
           }}
         >
-          <Grid
-            container
-            direction='column'
-            rowSpacing={{
-              xs: 4,
-              md: 6
-            }}
-          >
-            <Grid item>
-              <TextField
-                placeholder='User ID'
-                label="User ID"
-                fullWidth
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                label='Password'
-                placeholder='Password'
-                variant='outlined'
-                fullWidth
-              />
-            </Grid>
+          <form onSubmit={handleSubmit(onSubmit, onError)}>
             <Grid
-              item
-              marginTop={5}
+              container
+              direction='column'
+              rowSpacing={{
+                xs: 4,
+                md: 6
+              }}
             >
-              <Button
-                variant='contained'
-                size='large'
-                fullWidth
+              <Grid item>
+                <TextField
+                  type='text'
+                  className={watchEmail ? classes.formFilled : ''}
+                  error={errors?.email ? true : false}
+                  helperText={errors?.email?.message}
+                  placeholder='Email'
+                  label='Email'
+                  fullWidth
+                  {...register('email', {
+                    required: 'required email',
+                    pattern: {
+                      value: regex.email,
+                      message: 'invalid email'
+                    }
+                  })}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  type={showPassword ? 'text' : 'password'}
+                  className={watchPassword ? classes.formFilled : ''}
+                  error={errors?.password ? true : false}
+                  helperText={errors?.password?.message}
+                  label='Password'
+                  placeholder='Password'
+                  variant='outlined'
+                  fullWidth
+                  {...register('password', {
+                    required: 'required password',
+                    pattern: {
+                      value: regex.password,
+                      message: 'invalid password'
+                    }
+                  })}
+                  InputProps ={{
+                    endAdornment: (
+                      <InputAdornment
+                        position="end"
+                      >
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+              <Grid
+                item
+                marginTop={5}
               >
-                Login
-              </Button>
+                <Button
+                  type='submit'
+                  variant='contained'
+                  size='large'
+                  fullWidth
+                >
+                  Login
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
+          </form>
         </Box>
       </Card>
     </Container>

@@ -1,7 +1,11 @@
 import { createTheme } from '@mui/material/styles'
 import { grey } from '@mui/material/colors';
 
-export default createTheme({
+export const classes = {
+  formFilled: 'custom-default-theme-form-filled'
+}
+
+export const theme = createTheme({
   palette: {
 		common: {
 			black: 'rgba(51, 51, 51, 1)',
@@ -62,6 +66,16 @@ export default createTheme({
         color: 'primary'
       }
     },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            transitionDelay: '9999s',
+            transitionProperty: 'background-color, color',
+          },
+        },
+      }
+    },
     MuiOutlinedInput: {
       defaultProps: {
         size: 'small'
@@ -69,10 +83,20 @@ export default createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
+          '.MuiOutlinedInput-input': {
+            zIndex: 10,
+          },
           '.MuiOutlinedInput-notchedOutline': {
             'legend': {
               display: 'none',
             },
+          },
+          '&.Mui-error': {
+            '.MuiOutlinedInput-notchedOutline': {
+              borderWidth: 2,
+              backgroundColor: 'rgba(235, 22, 48, 0.05)'
+              
+            }
           },
           '&:hover:not(.Mui-focused):not(.Mui-disabled):not(.Mui-error)': {
             '.MuiOutlinedInput-notchedOutline': {
@@ -81,6 +105,31 @@ export default createTheme({
             }
           },
         },
+      }
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          [`&.${classes.formFilled}`]: {
+            '.MuiOutlinedInput-notchedOutline': {
+              borderColor: '#85b0ff',
+              borderWidth: 2
+            },
+            '.MuiOutlinedInput-root:not(.Mui-error) fieldset': {
+              zIndex: 0,
+              backgroundColor: '#F8FAFF'
+            }
+          },
+        },
+      },
+    },
+    MuiInputAdornment: {
+      styleOverrides: {
+        root: {
+          '&.MuiInputAdornment-outlined': {
+            zIndex: 10,
+          }
+        }
       }
     },
     MuiInputLabel: {
@@ -95,16 +144,19 @@ export default createTheme({
             marginBottom: '8px',
             fontWeight: '700',
             fontSize: '0.875rem',
-            color: grey[500],
+            color: grey[500]
           },
-          '&.Mui-focused': {
+          '&.Mui-focused:not(.Mui-error)': {
             color: '#387df6'
           },
-          '&.MuiFormLabel-filled': {
+          '&.MuiFormLabel-filled:not(.Mui-error)': {
             color: '#387df6'
+          },
+          '&.Mui-error': {
+            color: 'rgba(246, 131, 140, 1)'
           }
         }
-      },
-    },
+      }
+    }
   }
 })
