@@ -1,11 +1,11 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-const src = path.resolve(__dirname, 'src');
+const app = path.resolve(__dirname, 'app');
 const dist = path.resolve(__dirname, 'dist');
 
 const config = {
-  entry: src + '/index.tsx',
+  entry: app + '/index.tsx',
   output: {
     path: dist,
     publicPath: '/',
@@ -33,7 +33,7 @@ const config = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: src + '/index.html',
+      template: app + '/index.html',
       filename: 'index.html',
     }),
   ],
@@ -43,6 +43,7 @@ const config = {
       directory: dist,
     },
     host: '0.0.0.0',
+    port: 3000,
   },
 };
 
