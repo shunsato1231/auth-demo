@@ -1,49 +1,49 @@
-import { createTheme } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
 export const classes = {
-  formFilled: 'custom-default-theme-form-filled'
-}
+  formFilled: 'custom-default-theme-form-filled',
+};
 
 export const theme = createTheme({
   palette: {
-		common: {
-			black: 'rgba(51, 51, 51, 1)',
-			white: '#fff'
-		},
-		background: {
-			paper: '#fff',
-			default: '#fff'
-		},
-		primary: {
-			light: '#85b0ff',
-			main: '#387df6',
-			dark: '#2e5ca9',
-			contrastText: '#fff'
-		},
-		secondary: {
-			light: '#f5d846',
-			main: '#ffd505',
-			dark: '#d6b307',
-			contrastText: '#fff'
-		},
-		error: {
-			light: 'rgba(246, 131, 140, 1)',
-			main: 'rgba(235, 22, 48, 1)',
-			dark: 'rgba(182, 11, 31, 1)',
-			contrastText: '#fff'
-		},
-		text: {
-			primary: 'rgba(51, 51, 51, 1)',
-			secondary: 'rgba(51, 51, 51, 0.54)',
-			disabled: 'rgba(51, 51, 51, 0.38)',
-		}
-	},
+    common: {
+      black: 'rgba(51, 51, 51, 1)',
+      white: '#fff',
+    },
+    background: {
+      paper: '#fff',
+      default: '#fff',
+    },
+    primary: {
+      light: '#85b0ff',
+      main: '#387df6',
+      dark: '#2e5ca9',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#f5d846',
+      main: '#ffd505',
+      dark: '#d6b307',
+      contrastText: '#fff',
+    },
+    error: {
+      light: 'rgba(246, 131, 140, 1)',
+      main: 'rgba(235, 22, 48, 1)',
+      dark: 'rgba(182, 11, 31, 1)',
+      contrastText: '#fff',
+    },
+    text: {
+      primary: 'rgba(51, 51, 51, 1)',
+      secondary: 'rgba(51, 51, 51, 0.54)',
+      disabled: 'rgba(51, 51, 51, 0.38)',
+    },
+  },
   spacing: 4,
   typography: {
     button: {
-        textTransform: 'none'
-    }
+      textTransform: 'none',
+    },
   },
   components: {
     MuiButton: {
@@ -53,18 +53,18 @@ export const theme = createTheme({
     },
     MuiCheckbox: {
       defaultProps: {
-        color: 'primary'
+        color: 'primary',
       },
     },
     MuiRadio: {
       defaultProps: {
-        color: 'primary'
+        color: 'primary',
       },
     },
     MuiSwitch: {
       defaultProps: {
-        color: 'primary'
-      }
+        color: 'primary',
+      },
     },
     MuiInputBase: {
       styleOverrides: {
@@ -74,11 +74,11 @@ export const theme = createTheme({
             transitionProperty: 'background-color, color',
           },
         },
-      }
+      },
     },
     MuiOutlinedInput: {
       defaultProps: {
-        size: 'small'
+        size: 'small',
       },
       styleOverrides: {
         root: {
@@ -87,25 +87,24 @@ export const theme = createTheme({
             zIndex: 10,
           },
           '.MuiOutlinedInput-notchedOutline': {
-            'legend': {
+            legend: {
               display: 'none',
             },
           },
           '&.Mui-error': {
             '.MuiOutlinedInput-notchedOutline': {
               borderWidth: 2,
-              backgroundColor: 'rgba(235, 22, 48, 0.05)'
-              
-            }
+              backgroundColor: 'rgba(235, 22, 48, 0.05)',
+            },
           },
           '&:hover:not(.Mui-focused):not(.Mui-disabled):not(.Mui-error)': {
             '.MuiOutlinedInput-notchedOutline': {
               borderColor: '#85b0ff',
               borderWidth: 1,
-            }
+            },
           },
         },
-      }
+      },
     },
     MuiFormControl: {
       styleOverrides: {
@@ -113,12 +112,12 @@ export const theme = createTheme({
           [`&.${classes.formFilled}`]: {
             '.MuiOutlinedInput-notchedOutline': {
               borderColor: '#85b0ff',
-              borderWidth: 2
+              borderWidth: 2,
             },
             '.MuiOutlinedInput-root:not(.Mui-error) fieldset': {
               zIndex: 0,
-              backgroundColor: '#F8FAFF'
-            }
+              backgroundColor: '#F8FAFF',
+            },
           },
         },
       },
@@ -128,13 +127,13 @@ export const theme = createTheme({
         root: {
           '&.MuiInputAdornment-outlined': {
             zIndex: 10,
-          }
-        }
-      }
+          },
+        },
+      },
     },
     MuiInputLabel: {
       defaultProps: {
-        shrink: true
+        shrink: true,
       },
       styleOverrides: {
         root: {
@@ -144,19 +143,19 @@ export const theme = createTheme({
             marginBottom: '8px',
             fontWeight: '700',
             fontSize: '0.875rem',
-            color: grey[500]
+            color: grey[500],
           },
           '&.Mui-focused:not(.Mui-error)': {
-            color: '#387df6'
+            color: '#387df6',
           },
           '&.MuiFormLabel-filled:not(.Mui-error)': {
-            color: '#387df6'
+            color: '#387df6',
           },
           '&.Mui-error': {
-            color: 'rgba(246, 131, 140, 1)'
-          }
-        }
-      }
-    }
-  }
-})
+            color: 'rgba(246, 131, 140, 1)',
+          },
+        },
+      },
+    },
+  },
+});

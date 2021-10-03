@@ -1,25 +1,19 @@
-const path = require("path")
+import path from 'path';
 
 module.exports = {
-    moduleFileExtensions: [
-        'ts',
-        'tsx',
-        'js'
-    ],
-    transform: {
-        '^.+\\.(js|jsx|mjs)$': 'babel-jest',
-        '^.+\\.(ts|tsx)$': 'ts-jest'
+  moduleFileExtensions: ['ts', 'tsx', 'js'],
+  transform: {
+    '^.+\\.(js|jsx|mjs)$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
+  setupFiles: ['<rootDir>/jest.setupEnzyme.ts'],
+  globals: {
+    'ts-jest': {
+      babelConfig: true,
+      tsConfig: path.resolve(__dirname, 'tsconfig.json'),
     },
-    setupFiles: [
-        '<rootDir>/jest.setupEnzyme.ts'
-    ],
-    globals: {
-        'ts-jest': {
-            babelConfig: true,
-            tsConfig: path.resolve(__dirname, "tsconfig.json")
-        }
-    },
-    moduleNameMapper: {
-      '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules'
-    }
-}
+  },
+  moduleNameMapper: {
+    '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules',
+  },
+};

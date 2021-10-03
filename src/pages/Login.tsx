@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {useFormMui} from '../hooks/useFormMui.hook'
+import { useFormMui } from '../hooks/useFormMui.hook';
 
 import {
   Container,
@@ -10,27 +10,33 @@ import {
   TextField,
   Button,
   InputAdornment,
-  IconButton
-} from '@mui/material'
+  IconButton,
+} from '@mui/material';
 
-import {
-  Visibility,
-  VisibilityOff
-} from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import {classes} from '../theme/default'
-import {regex} from '../utils/regex'
+import { classes } from '../theme/default';
+import { regex } from '../utils/regex';
 
 export const Login: React.FC = (): JSX.Element => {
-  const { handleSubmit, register, formState: { errors }, watch }
-    = useFormMui({mode: 'onTouched'});
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    watch,
+  } = useFormMui({ mode: 'onTouched' });
 
-  const watchEmail = watch('email')
-  const watchPassword = watch('password')
-  const [showPassword, setShowPassword] = useState(false)
+  const watchEmail = watch('email');
+  const watchPassword = watch('password');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit = (data, e) => console.log(data, e);
-  const onError = (errors, e) => console.log(errors, e);
+  const onSubmit = (
+    data: {
+      email?: string;
+      password?: string;
+    },
+    e?: React.BaseSyntheticEvent
+  ) => console.log(data, e);
 
   return (
     <Container
@@ -42,25 +48,25 @@ export const Login: React.FC = (): JSX.Element => {
         alignItems: 'center',
         px: {
           xs: 4,
-        }
+        },
       }}
     >
       <Typography
-        variant='h4'
-        component='h1'
-        align='center'
-        fontWeight='bold'
+        variant="h4"
+        component="h1"
+        align="center"
+        fontWeight="bold"
         sx={{
           color: 'primary.main',
-          mb: 6
+          mb: 6,
         }}
       >
         Login
       </Typography>
       <Card
-        variant='outlined'
+        variant="outlined"
         sx={{
-          width: ['100%', 580]
+          width: ['100%', 580],
         }}
       >
         <Box
@@ -75,30 +81,30 @@ export const Login: React.FC = (): JSX.Element => {
             },
           }}
         >
-          <form onSubmit={handleSubmit(onSubmit, onError)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Grid
               container
-              direction='column'
+              direction="column"
               rowSpacing={{
                 xs: 4,
-                md: 6
+                md: 6,
               }}
             >
               <Grid item>
                 <TextField
-                  type='text'
+                  type="text"
                   className={watchEmail ? classes.formFilled : ''}
                   error={errors?.email ? true : false}
                   helperText={errors?.email?.message}
-                  placeholder='Email'
-                  label='Email'
+                  placeholder="Email"
+                  label="Email"
                   fullWidth
                   {...register('email', {
                     required: 'required email',
                     pattern: {
                       value: regex.email,
-                      message: 'invalid email'
-                    }
+                      message: 'invalid email',
+                    },
                   })}
                 />
               </Grid>
@@ -108,22 +114,20 @@ export const Login: React.FC = (): JSX.Element => {
                   className={watchPassword ? classes.formFilled : ''}
                   error={errors?.password ? true : false}
                   helperText={errors?.password?.message}
-                  label='Password'
-                  placeholder='Password'
-                  variant='outlined'
+                  label="Password"
+                  placeholder="Password"
+                  variant="outlined"
                   fullWidth
                   {...register('password', {
                     required: 'required password',
                     pattern: {
                       value: regex.password,
-                      message: 'invalid password'
-                    }
+                      message: 'invalid password',
+                    },
                   })}
-                  InputProps ={{
+                  InputProps={{
                     endAdornment: (
-                      <InputAdornment
-                        position="end"
-                      >
+                      <InputAdornment position="end">
                         <IconButton
                           aria-label="toggle password visibility"
                           onClick={() => setShowPassword(!showPassword)}
@@ -132,18 +136,15 @@ export const Login: React.FC = (): JSX.Element => {
                           {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
               </Grid>
-              <Grid
-                item
-                marginTop={5}
-              >
+              <Grid item marginTop={5}>
                 <Button
-                  type='submit'
-                  variant='contained'
-                  size='large'
+                  type="submit"
+                  variant="contained"
+                  size="large"
                   fullWidth
                 >
                   Login
@@ -154,5 +155,5 @@ export const Login: React.FC = (): JSX.Element => {
         </Box>
       </Card>
     </Container>
-  )
-}
+  );
+};
