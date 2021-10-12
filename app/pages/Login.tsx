@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFormMui } from '../hooks/useFormMui.hook';
+import { useFormMui } from '../hooks/FormMui/FormMui.hook';
 
 import {
   Container,
@@ -49,8 +49,7 @@ export const Login: React.FC = (): JSX.Element => {
         px: {
           xs: 4,
         },
-      }}
-    >
+      }}>
       <Typography
         variant="h4"
         component="h1"
@@ -59,16 +58,14 @@ export const Login: React.FC = (): JSX.Element => {
         sx={{
           color: 'primary.main',
           mb: 6,
-        }}
-      >
+        }}>
         Login
       </Typography>
       <Card
         variant="outlined"
         sx={{
           width: ['100%', 580],
-        }}
-      >
+        }}>
         <Box
           sx={{
             my: {
@@ -79,8 +76,7 @@ export const Login: React.FC = (): JSX.Element => {
               xs: 4,
               md: 6,
             },
-          }}
-        >
+          }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid
               container
@@ -88,8 +84,7 @@ export const Login: React.FC = (): JSX.Element => {
               rowSpacing={{
                 xs: 4,
                 md: 6,
-              }}
-            >
+              }}>
               <Grid item>
                 <TextField
                   type="text"
@@ -131,8 +126,7 @@ export const Login: React.FC = (): JSX.Element => {
                         <IconButton
                           aria-label="toggle password visibility"
                           onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
+                          edge="end">
                           {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
@@ -145,8 +139,7 @@ export const Login: React.FC = (): JSX.Element => {
                   type="submit"
                   variant="contained"
                   size="large"
-                  fullWidth
-                >
+                  fullWidth>
                   Login
                 </Button>
               </Grid>

@@ -1,5 +1,6 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import DotenvWebpack from 'dotenv-webpack';
 
 const app = path.resolve(__dirname, 'app');
 const dist = path.resolve(__dirname, 'dist');
@@ -36,6 +37,7 @@ const config = {
       template: app + '/index.html',
       filename: 'index.html',
     }),
+    new DotenvWebpack(),
   ],
   devServer: {
     historyApiFallback: true,
