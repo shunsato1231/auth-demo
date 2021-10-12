@@ -1,0 +1,29 @@
+db-app: https://www.bezkoder.com/node-js-mongodb-auth-jwt/
+react-app: https://www.bezkoder.com/react-jwt-auth/
+totp-app: https://ichi.pro/node-to-react-o-shiyoshita-2-yoso-ninsho-furo-8572203474707
+formatter: https://qiita.com/sprout2000/items/ee4fc97f83f45ba1d227
+react-hook-form mui: https://github.com/react-hook-form/react-hook-form/discussions/5250
+mui: https://zenn.dev/h_yoshikawa0724/articles/2021-09-26-material-ui-v5
+mongodb: https://reffect.co.jp/windows/mac-mongodb-install#MongoDB
+
+https://qiita.com/rpf-nob/items/1477c3ff8309ec07ddcb
+https://qiita.com/s-yoshida/items/5ac5da205ea502f1a169
+ts：
+https://qiita.com/purini-to/items/075143f45fa0caf558d8
+
+https://qiita.com/azukiazusa/items/b0365c95e6509ec57f7a
+
+session: https://qiita.com/G-awa/items/ebb6e214ed45f27e5de2
+
+設計
+https://qiita.com/sadnessOjisan/items/ea5590efa3f55ef56edd
+https://www.nuits.jp/entry/easiest-clean-architecture-2019-09
+https://github.com/sadnessOjisan/ts-clean
+https://qiita.com/hirotakan/items/698c1f5773a3cca6193e
+https://github.com/hirotakan/go-cleanarchitecture-sample
+https://github.com/quick-xp/taskhelp-api
+https://github.com/youchann/todo-typescript-clean-architecture
+https://github.com/dcaponi/clean-architecture-implementation
+
+ステータスコード
+https://www.itmanage.co.jp/column/http-www-request-response-statuscode/#anc004

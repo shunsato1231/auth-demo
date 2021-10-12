@@ -2,11 +2,11 @@ import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import DotenvWebpack from 'dotenv-webpack';
 
-const app = path.resolve(__dirname, 'app');
+const src = path.resolve(__dirname, 'frontend');
 const dist = path.resolve(__dirname, 'dist');
 
 const config = {
-  entry: app + '/index.tsx',
+  entry: src + '/index.tsx',
   output: {
     path: dist,
     publicPath: '/',
@@ -34,7 +34,7 @@ const config = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: app + '/index.html',
+      template: src + '/index.html',
       filename: 'index.html',
     }),
     new DotenvWebpack(),
