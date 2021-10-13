@@ -3,7 +3,7 @@ import { AuthContextType, useAuth } from './Auth.hook';
 import { createContext, useContext } from 'react';
 
 const defaultAuthContext: AuthContextType = {
-  auth: {
+  flag: {
     mfaEnabled: false,
     mfaVerified: false,
     tokenVerified: false,

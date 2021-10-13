@@ -1,6 +1,6 @@
-import express from 'express';
+import express, { Response } from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
+// import cors from 'cors';
 import db from './models';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
@@ -8,11 +8,22 @@ import userRoutes from './routes/user.routes';
 const app = express();
 dotenv.config();
 
-const corsOptions = {
-  origin: 'http://localhost:8081',
-};
+app.use(function (_, res: Response, next) {
+  res.header('Access-Control-Allow-Origin', '*'); // update to match the domain you will make the request from
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET');
+  res.setHeader('Access-Control-Max-Age', '3600');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, x-access-token, x-user-id,Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+  );
+  next();
+});
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());

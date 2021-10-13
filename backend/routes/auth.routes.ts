@@ -17,24 +17,24 @@ export default (app: Express): void => {
     next();
   });
 
-  app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail], signup);
+  app.post('/auth/signup', [verifySignUp.checkDuplicateEmail], signup);
 
-  app.post('/api/auth/signin', signin);
+  app.post('/auth/signin', signin);
 
   app.post(
-    '/api/auth/verify_mfa',
+    '/auth/verify_mfa',
     [authJwt.verifyToken, authJwt.verifyTOTP],
     verifyOneTimePassword
   );
 
   app.post(
-    '/api/auth/enabled_mfa',
+    '/auth/enabled_mfa',
     [authJwt.verifyToken, authJwt.isDisabledMfa, authJwt.verifyTOTP],
     enableMfa
   );
 
   app.get(
-    '/api/auth/mfa_qr_code',
+    '/auth/mfa_qr_code',
     [authJwt.verifyToken, authJwt.isDisabledMfa],
     generateMfaQRCode
   );

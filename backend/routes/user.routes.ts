@@ -11,10 +11,10 @@ export default (app: Express): void => {
     next();
   });
 
-  app.get('/api/test/all', allAccess);
+  app.get('/test/all', allAccess);
 
   app.get(
-    '/api/test/user',
+    '/test/user',
     [authJwt.verifyToken, authJwt.isMfaVerified],
     userBoard
   );

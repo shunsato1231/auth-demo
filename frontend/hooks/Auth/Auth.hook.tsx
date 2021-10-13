@@ -9,7 +9,7 @@ interface IErrorResponse {
   error_user_message: string;
 }
 export interface AuthContextType {
-  auth: userAuthType;
+  flag: userAuthType;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -25,17 +25,16 @@ export type userAuthType = {
 };
 
 export const useAuth = (): AuthContextType => {
-  const apiBaseurl = process.env.REACT_APP_API_BASE + '/api/auth/';
   const [token, setToken] = useLocalStorage<string>('token', '');
   const initialAuth: userAuthType = {
     mfaEnabled: false,
     mfaVerified: false,
     tokenVerified: false,
   };
-  const [auth, setAuth] = useLocalStorage<userAuthType>('auth', initialAuth);
+  const [flag, setFlag] = useLocalStorage<userAuthType>('flag', initialAuth);
 
   const signUp = async (email: string, password: string) => {
-    const url = apiBaseurl + 'signup';
+    const url = '/api/auth/signup';
     const data = {
       email,
       password,
@@ -51,7 +50,7 @@ export const useAuth = (): AuthContextType => {
       const user: User = res.data;
 
       await setToken(user.token);
-      await setAuth({
+      await setFlag({
         mfaEnabled: user.mfaEnabled,
         mfaVerified: false,
         tokenVerified: true,
@@ -66,7 +65,7 @@ export const useAuth = (): AuthContextType => {
   };
 
   const signIn = async (email: string, password: string) => {
-    const url = apiBaseurl + 'signin';
+    const url = '/api/auth/signin';
     const data = {
       email,
       password,
@@ -80,15 +79,16 @@ export const useAuth = (): AuthContextType => {
         withCredentials: true,
       });
       const user: User = response.data;
-
       await setToken(user.token);
-      await setAuth({
+      await setFlag({
         mfaEnabled: user.mfaEnabled,
         mfaVerified: false,
         tokenVerified: true,
       });
+      console.log(user.token);
+      console.log(token);
     } catch (err) {
-      await setAuth({
+      await setFlag({
         mfaEnabled: false,
         mfaVerified: false,
         tokenVerified: false,
@@ -104,7 +104,7 @@ export const useAuth = (): AuthContextType => {
 
   const signOut = async () => {
     await setToken('');
-    await setAuth({
+    await setFlag({
       mfaEnabled: false,
       mfaVerified: false,
       tokenVerified: false,
@@ -112,25 +112,22 @@ export const useAuth = (): AuthContextType => {
   };
 
   const verifiedMfa = async (code: string) => {
-    const url = apiBaseurl + 'verify_mfa';
-    const data = { code };
-    const headers = { Authorization: `Bearer ${token}` };
-
+    const url = '/api/auth/verify_mfa';
+    const data = { code, token };
     try {
       const response = await axios({
         method: 'POST',
         url,
         data,
-        headers,
         withCredentials: true,
       });
       // setToken
       const token: Token = response.data;
       await setToken(token);
-      // setAuth
-      const newAuth = auth;
+      // setFlag
+      const newAuth = flag;
       newAuth.mfaVerified = true;
-      await setAuth(newAuth);
+      await setFlag(newAuth);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         throw (err as AxiosError<IErrorResponse>).response?.data;
@@ -141,7 +138,7 @@ export const useAuth = (): AuthContextType => {
   };
 
   const getMfaQr = async () => {
-    const url = apiBaseurl + 'mfa_qr_code';
+    const url = '/api/auth/mfa_qr_code';
     const headers = { Authorization: `Bearer ${token}` };
 
     try {
@@ -167,7 +164,7 @@ export const useAuth = (): AuthContextType => {
   };
 
   const enabledMfa = async () => {
-    const url = apiBaseurl + 'enabled_mfa';
+    const url = '/api/auth/enabled_mfa';
     const headers = { Authorization: `Bearer ${token}` };
 
     try {
@@ -180,8 +177,8 @@ export const useAuth = (): AuthContextType => {
       // setToken
       const token: Token = response.data;
       await setToken(token);
-      // setAuth
-      await setAuth({
+      // setFlag
+      await setFlag({
         mfaEnabled: true,
         mfaVerified: false,
         tokenVerified: true,
@@ -196,7 +193,7 @@ export const useAuth = (): AuthContextType => {
   };
 
   return {
-    auth,
+    flag,
     signUp,
     signIn,
     signOut,

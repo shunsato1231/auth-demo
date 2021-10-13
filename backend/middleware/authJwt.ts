@@ -28,6 +28,8 @@ const verifyToken = async (
   const token =
     req.body.token || req.query.token || req.headers['x-access-token'];
 
+  console.log(token);
+
   if (token) {
     try {
       const payload = decodeJWT<{ id?: string }>(token, secretKey);
