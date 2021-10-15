@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Container, Typography, Stack, Button } from '@mui/material';
-import { useAuthContext } from '../hooks/Auth/Auth.context';
+import { useAuthContext } from '~/hooks/Auth/Auth.context';
 export const Home: React.FC = (): JSX.Element => {
   const history = useHistory();
   const auth = useAuthContext();

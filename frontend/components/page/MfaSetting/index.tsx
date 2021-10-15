@@ -8,7 +8,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { useAuthContext } from '../hooks/Auth/Auth.context';
+import { useAuthContext } from '~/hooks/Auth/Auth.context';
 export const MfaSetting: React.FC = (): JSX.Element => {
   const auth = useAuthContext();
   const [qrImage, setQrImage] = useState<string>('');

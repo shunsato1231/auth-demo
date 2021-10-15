@@ -14,7 +14,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "pretty": true
+    "pretty": true,
+    "baseUrl": "./",
+    "paths": {
+      "~/*": ["frontend/*"]
+    }
   },
   "ts-node": {
     "compilerOptions": {

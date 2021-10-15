@@ -31,6 +31,9 @@ const config = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      '~': src,
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({

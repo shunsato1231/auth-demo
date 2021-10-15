@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFormMui } from '../hooks/FormMui/FormMui.hook';
+import { useFormMui } from '~/hooks/FormMui/FormMui.hook';
 
 import {
   Container,
@@ -15,8 +15,8 @@ import {
 
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import { regex } from '../utils/regex';
-import { useAuthContext } from '../hooks/Auth/Auth.context';
+import { regex } from '~/utils/regex';
+import { useAuthContext } from '~/hooks/Auth/Auth.context';
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const Signin: React.FC = (): JSX.Element => {

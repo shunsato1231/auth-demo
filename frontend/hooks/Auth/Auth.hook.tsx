@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { useLocalStorage } from '../LocalStorage/LocalStorage.hook';
+import { useLocalStorage } from '~/hooks/LocalStorage/LocalStorage.hook';
 import { User, Token } from './Auth.types';
 import { Buffer } from 'buffer';
 
