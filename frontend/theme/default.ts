@@ -1,10 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
-export const classes = {
-  formFilled: 'custom-default-theme-form-filled',
-};
-
 export const theme = createTheme({
   palette: {
     common: {
@@ -109,12 +105,12 @@ export const theme = createTheme({
     MuiFormControl: {
       styleOverrides: {
         root: {
-          [`&.${classes.formFilled}`]: {
+          '.MuiFormLabel-filled+.MuiOutlinedInput-root:not(.Mui-error)': {
             '.MuiOutlinedInput-notchedOutline': {
               borderColor: '#85b0ff',
               borderWidth: 2,
             },
-            '.MuiOutlinedInput-root:not(.Mui-error) fieldset': {
+            fieldset: {
               zIndex: 0,
               backgroundColor: '#F8FAFF',
             },

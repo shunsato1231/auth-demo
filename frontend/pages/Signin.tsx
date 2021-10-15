@@ -11,14 +11,13 @@ import {
   Button,
   InputAdornment,
   IconButton,
-  Slide,
 } from '@mui/material';
 
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import { classes } from '../theme/default';
 import { regex } from '../utils/regex';
 import { useAuthContext } from '../hooks/Auth/Auth.context';
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const Signin: React.FC = (): JSX.Element => {
   const auth = useAuthContext();
@@ -26,83 +25,130 @@ export const Signin: React.FC = (): JSX.Element => {
   const {
     handleSubmit: haldleSubmitSignin,
     register: registerSignin,
+    reset: resetSigninInput,
     formState: { errors: signinErrors },
-    watch: watchSignin,
   } = useFormMui({ mode: 'onTouched' });
-  const watchEmail = watchSignin('email');
-  const watchPassword = watchSignin('password');
   const [showPassword, setShowPassword] = useState(false);
-  const onSignin = (data: { email: string; password: string }) => {
-    auth.signIn(data.email, data.password).catch((err) => {
-      console.error(err);
-    });
+  const [resetSigninFlag, setResetSigninFlag] = useState<number>(0);
+  const resetSignin = () => {
+    resetSigninInput();
+    setResetSigninFlag(resetSigninFlag + 1);
+  };
+  const onSignin = ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    auth
+      .signIn(email, password)
+      .then(async () => {
+        await sleep(700);
+        resetSignin();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   const {
     handleSubmit: haldleSubmitMfa,
     register: registerMfa,
+    reset: resetMfaInput,
+    clearErrors: clearErrorsMfa,
+    setError: setErrorMfa,
     formState: { errors: mfaErrors },
-    watch: watchMfa,
   } = useFormMui({ mode: 'onTouched' });
-  const watchCode = watchMfa('code');
-  const onMfaVerify = (data: { code: string }) => {
-    auth.verifiedMfa(data.code).catch((err) => {
-      console.error(err);
+  const [resetMfaFlag, setResetMfaFlag] = useState<number>(0);
+  const resetMfa = () => {
+    resetMfaInput();
+    setResetMfaFlag(resetMfaFlag + 1);
+  };
+  const onMfaVerify = ({ code }: { code: string }) => {
+    auth
+      .verifiedMfa(code)
+      .then(async () => {
+        resetMfa();
+      })
+      .catch((err) => {
+        resetMfa();
+        setErrorMfa('code', {
+          type: 'manual',
+          message: err.error_user_message,
+        });
+      });
+  };
+
+  const mfaVerifyCancel = async () => {
+    auth.signOut().then(async () => {
+      resetMfa();
+      clearErrorsMfa();
     });
   };
 
-  const containerRef = React.useRef(null);
-
   return (
-    <Container
+    <Box
       sx={{
+        width: '100vw',
         height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        px: {
-          xs: 4,
-        },
-      }}
-      ref={containerRef}>
-      <Slide
-        direction="left"
-        in={!auth.flag.tokenVerified}
-        container={containerRef.current}>
-        <Box
+        overflow: 'hidden',
+      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          width: '200vw',
+          transition: 'transform 0.7s ease 0.2s',
+          transform: auth.flag.tokenVerified
+            ? 'translateX(-100vw)'
+            : 'translateX(0)',
+        }}>
+        <Container
           sx={{
-            width: ['100%', 580],
-            display: auth.flag.tokenVerified ? 'none' : 'block',
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            px: {
+              xs: 0,
+            },
           }}>
-          <Typography
-            variant="h4"
-            component="h1"
-            align="center"
-            fontWeight="bold"
+          <Box
             sx={{
-              color: 'primary.main',
-              mb: 6,
+              width: ['100%', 700],
+              mx: {
+                xs: 4,
+              },
             }}>
-            Login
-          </Typography>
-          <Card
-            variant="outlined"
-            sx={{
-              width: ['100%', 580],
-            }}>
-            <Box
+            <Typography
+              variant="h4"
+              component="h1"
+              align="center"
+              fontWeight="bold"
               sx={{
-                my: {
+                color: 'primary.main',
+                mb: 6,
+              }}>
+              Login
+            </Typography>
+            <Card
+              variant="outlined"
+              sx={{
+                width: '100%',
+                py: {
                   xs: 6,
                   md: 8,
                 },
-                mx: {
+                px: {
                   xs: 4,
                   md: 6,
                 },
               }}>
-              <form onSubmit={haldleSubmitSignin(onSignin)}>
+              <form
+                key={resetSigninFlag}
+                onSubmit={haldleSubmitSignin(onSignin)}>
                 <Grid
                   container
                   direction="column"
@@ -113,7 +159,6 @@ export const Signin: React.FC = (): JSX.Element => {
                   <Grid item>
                     <TextField
                       type="text"
-                      className={watchEmail ? classes.formFilled : ''}
                       error={signinErrors?.email ? true : false}
                       helperText={signinErrors?.email?.message}
                       placeholder="Email"
@@ -131,7 +176,6 @@ export const Signin: React.FC = (): JSX.Element => {
                   <Grid item>
                     <TextField
                       type={showPassword ? 'text' : 'password'}
-                      className={watchPassword ? classes.formFilled : ''}
                       error={signinErrors?.password ? true : false}
                       helperText={signinErrors?.password?.message}
                       label="Password"
@@ -174,46 +218,50 @@ export const Signin: React.FC = (): JSX.Element => {
                   </Grid>
                 </Grid>
               </form>
-            </Box>
-          </Card>
-        </Box>
-      </Slide>
-      <Slide
-        direction="left"
-        in={auth.flag.tokenVerified}
-        container={containerRef.current}>
-        <Box
+            </Card>
+          </Box>
+        </Container>
+        <Container
           sx={{
-            display: !auth.flag.tokenVerified ? 'none' : 'block',
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            px: {
+              xs: 4,
+            },
           }}>
-          <Typography
-            variant="h4"
-            component="h1"
-            align="center"
-            fontWeight="bold"
+          <Box
             sx={{
-              color: 'primary.main',
-              mb: 6,
+              width: ['100%', 700],
             }}>
-            Mfa verify
-          </Typography>
-          <Card
-            variant="outlined"
-            sx={{
-              width: ['100%', 580],
-            }}>
-            <Box
+            <Typography
+              variant="h4"
+              component="h1"
+              align="center"
+              fontWeight="bold"
               sx={{
-                my: {
+                color: 'primary.main',
+                mb: 6,
+              }}>
+              Mfa verify
+            </Typography>
+            <Card
+              variant="outlined"
+              sx={{
+                width: '100%',
+                py: {
                   xs: 6,
                   md: 8,
                 },
-                mx: {
+                px: {
                   xs: 4,
                   md: 6,
                 },
               }}>
-              <form onSubmit={haldleSubmitMfa(onMfaVerify)}>
+              <form key={resetMfaFlag} onSubmit={haldleSubmitMfa(onMfaVerify)}>
                 <Grid
                   container
                   direction="column"
@@ -224,7 +272,6 @@ export const Signin: React.FC = (): JSX.Element => {
                   <Grid item>
                     <TextField
                       type="number"
-                      className={watchCode ? classes.formFilled : ''}
                       error={mfaErrors?.code ? true : false}
                       helperText={mfaErrors?.code?.message}
                       placeholder="One time password"
@@ -244,16 +291,15 @@ export const Signin: React.FC = (): JSX.Element => {
                       variant="contained"
                       size="large"
                       fullWidth>
-                      Login
+                      Verify
                     </Button>
                   </Grid>
                   <Grid item>
                     <Button
-                      type="submit"
                       variant="contained"
                       size="large"
                       fullWidth
-                      onClick={() => auth.signOut()}
+                      onClick={() => mfaVerifyCancel()}
                       sx={{
                         backgroundColor: 'primary.light',
                       }}>
@@ -262,10 +308,10 @@ export const Signin: React.FC = (): JSX.Element => {
                   </Grid>
                 </Grid>
               </form>
-            </Box>
-          </Card>
-        </Box>
-      </Slide>
-    </Container>
+            </Card>
+          </Box>
+        </Container>
+      </Box>
+    </Box>
   );
 };
