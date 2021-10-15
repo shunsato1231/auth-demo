@@ -25,10 +25,9 @@ const verifyToken = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  const authHeader = req.headers['authorization'];
   const token =
-    req.body.token || req.query.token || req.headers['x-access-token'];
-
-  console.log(token);
+    authHeader?.split(' ')[0] === 'Bearer' ? authHeader?.split(' ')[1] : '';
 
   if (token) {
     try {

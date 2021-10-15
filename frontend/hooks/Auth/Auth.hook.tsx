@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { useLocalStorage } from '../LocalStorage/LocalStorage.hook';
 import { User, Token } from './Auth.types';
+import { Buffer } from 'buffer';
 
 interface IErrorResponse {
   code: string;
@@ -9,7 +10,7 @@ interface IErrorResponse {
   error_user_message: string;
 }
 export interface AuthContextType {
-  flag: userAuthType;
+  flag: userFlagType;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -18,7 +19,7 @@ export interface AuthContextType {
   enabledMfa: () => Promise<void>;
 }
 
-export type userAuthType = {
+export type userFlagType = {
   mfaEnabled: boolean;
   mfaVerified: boolean;
   tokenVerified: boolean;
@@ -26,12 +27,12 @@ export type userAuthType = {
 
 export const useAuth = (): AuthContextType => {
   const [token, setToken] = useLocalStorage<string>('token', '');
-  const initialAuth: userAuthType = {
+  const initialAuth: userFlagType = {
     mfaEnabled: false,
     mfaVerified: false,
     tokenVerified: false,
   };
-  const [flag, setFlag] = useLocalStorage<userAuthType>('flag', initialAuth);
+  const [flag, setFlag] = useLocalStorage<userFlagType>('flag', initialAuth);
 
   const signUp = async (email: string, password: string) => {
     const url = '/api/auth/signup';
@@ -85,8 +86,6 @@ export const useAuth = (): AuthContextType => {
         mfaVerified: false,
         tokenVerified: true,
       });
-      console.log(user.token);
-      console.log(token);
     } catch (err) {
       await setFlag({
         mfaEnabled: false,
@@ -113,12 +112,14 @@ export const useAuth = (): AuthContextType => {
 
   const verifiedMfa = async (code: string) => {
     const url = '/api/auth/verify_mfa';
-    const data = { code, token };
+    const headers = { Authorization: `Bearer ${token}` };
+    const data = { code };
     try {
       const response = await axios({
         method: 'POST',
         url,
         data,
+        headers,
         withCredentials: true,
       });
       // setToken
@@ -150,7 +151,7 @@ export const useAuth = (): AuthContextType => {
         responseType: 'arraybuffer',
       });
 
-      const base64 = new Buffer(response.data, 'binary').toString('base64');
+      const base64 = Buffer.from(response.data, 'binary').toString('base64');
       const prefix = `data:${response.headers['content-type']};base64,`;
 
       return prefix + base64;
