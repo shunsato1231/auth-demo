@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import { GuestRoute } from './components/routes/GuestRoute';
 import { PrivateRoute } from './components/routes/PrivateRoute';
+import { MfaSettingRoute } from './components/routes/MfaSettingRoute';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { AuthProvider } from './hooks/Auth/Auth.context';
@@ -10,6 +11,7 @@ import { CssBaseline } from '@mui/material';
 
 import { Signin } from './pages/Signin';
 import { Home } from './pages/Home';
+import { MfaSetting } from './pages/MfaSetting';
 
 const App: React.FC = () => {
   return (
@@ -19,6 +21,11 @@ const App: React.FC = () => {
         <Router>
           <Switch>
             <GuestRoute path="/signin" component={Signin} toRedirect="/" />
+            <MfaSettingRoute
+              path="/mfa-setting"
+              component={MfaSetting}
+              toRedirect="/"
+            />
             <PrivateRoute path="/" component={Home} toRedirect="/signin" />
           </Switch>
         </Router>

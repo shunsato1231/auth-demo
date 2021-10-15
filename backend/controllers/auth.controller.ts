@@ -243,7 +243,7 @@ export const generateMfaQRCode = async (
 
       try {
         await User.findOneAndUpdate(
-          { mfaSecretKey: '' },
+          { _id: userId },
           { $set: { mfaSecretKey: mfaSecretKey } },
           { useFindAndModify: false }
         );
