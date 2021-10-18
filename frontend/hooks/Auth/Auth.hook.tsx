@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useLocalStorage } from '~/hooks/LocalStorage/LocalStorage.hook';
 import { User, Token } from './Auth.types';
@@ -34,111 +35,120 @@ export const useAuth = (): AuthContextType => {
   };
   const [flag, setFlag] = useLocalStorage<userFlagType>('flag', initialAuth);
 
-  const signUp = async (email: string, password: string) => {
-    const url = '/api/auth/signup';
-    const data = {
-      email,
-      password,
-    };
+  const signUp = useCallback(
+    async (email: string, password: string) => {
+      const url = '/api/auth/signup';
+      const data = {
+        email,
+        password,
+      };
 
-    try {
-      const res = await axios({
-        method: 'POST',
-        url: url,
-        data: data,
-        withCredentials: true,
-      });
-      const user: User = res.data;
+      try {
+        const res = await axios({
+          method: 'POST',
+          url: url,
+          data: data,
+          withCredentials: true,
+        });
+        const user: User = res.data;
 
-      await setToken(user.token);
-      await setFlag({
-        mfaEnabled: user.mfaEnabled,
-        mfaVerified: false,
-        tokenVerified: true,
-      });
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        throw (err as AxiosError<IErrorResponse>).response?.data;
-      } else {
-        throw err;
+        await setToken(user.token);
+        await setFlag({
+          mfaEnabled: user.mfaEnabled,
+          mfaVerified: false,
+          tokenVerified: true,
+        });
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          throw (err as AxiosError<IErrorResponse>).response?.data;
+        } else {
+          throw err;
+        }
       }
-    }
-  };
+    },
+    [setFlag, setToken]
+  );
 
-  const signIn = async (email: string, password: string) => {
-    const url = '/api/auth/signin';
-    const data = {
-      email,
-      password,
-    };
+  const signIn = useCallback(
+    async (email: string, password: string) => {
+      const url = '/api/auth/signin';
+      const data = {
+        email,
+        password,
+      };
 
-    try {
-      const response = await axios({
-        method: 'POST',
-        url: url,
-        data: data,
-        withCredentials: true,
-      });
-      const user: User = response.data;
-      await setToken(user.token);
-      await setFlag({
-        mfaEnabled: user.mfaEnabled,
-        mfaVerified: false,
-        tokenVerified: true,
-      });
-    } catch (err) {
-      await setFlag({
-        mfaEnabled: false,
-        mfaVerified: false,
-        tokenVerified: false,
-      });
+      try {
+        const response = await axios({
+          method: 'POST',
+          url: url,
+          data: data,
+          withCredentials: true,
+        });
+        const user: User = response.data;
+        await setToken(user.token);
+        await setFlag({
+          mfaEnabled: user.mfaEnabled,
+          mfaVerified: false,
+          tokenVerified: true,
+        });
+      } catch (err) {
+        await setFlag({
+          mfaEnabled: false,
+          mfaVerified: false,
+          tokenVerified: false,
+        });
 
-      if (axios.isAxiosError(err)) {
-        throw (err as AxiosError<IErrorResponse>).response?.data;
-      } else {
-        throw err;
+        if (axios.isAxiosError(err)) {
+          throw (err as AxiosError<IErrorResponse>).response?.data;
+        } else {
+          throw err;
+        }
       }
-    }
-  };
+    },
+    [setFlag, setToken]
+  );
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await setToken('');
     await setFlag({
       mfaEnabled: false,
       mfaVerified: false,
       tokenVerified: false,
     });
-  };
+  }, [setToken, setFlag]);
 
-  const verifiedMfa = async (code: string) => {
-    const url = '/api/auth/verify_mfa';
-    const headers = { Authorization: `Bearer ${token}` };
-    const data = { code };
-    try {
-      const response = await axios({
-        method: 'POST',
-        url,
-        data,
-        headers,
-        withCredentials: true,
-      });
-      // setToken
-      const token: Token = response.data;
-      await setToken(token);
-      // setFlag
-      const newAuth = flag;
-      newAuth.mfaVerified = true;
-      await setFlag(newAuth);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        throw (err as AxiosError<IErrorResponse>).response?.data;
-      } else {
-        throw err;
+  const verifiedMfa = useCallback(
+    async (code: string) => {
+      const url = '/api/auth/verify_mfa';
+      const headers = { Authorization: `Bearer ${token}` };
+      const data = { code };
+      try {
+        const response = await axios({
+          method: 'POST',
+          url,
+          data,
+          headers,
+          withCredentials: true,
+        });
+        // setToken
+        const token: Token = response.data;
+        await setToken(token);
+        // setFlag
+        const newAuth = flag;
+        newAuth.mfaVerified = true;
+        await setFlag(newAuth);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          throw (err as AxiosError<IErrorResponse>).response?.data;
+        } else {
+          throw err;
+        }
       }
-    }
-  };
+    },
+    [setToken, setFlag, flag, token]
+  );
 
-  const getMfaQr = async () => {
+  const getMfaQr = useCallback(async () => {
     const url = '/api/auth/mfa_qr_code';
     const headers = { Authorization: `Bearer ${token}` };
 
@@ -162,9 +172,9 @@ export const useAuth = (): AuthContextType => {
         throw err;
       }
     }
-  };
+  }, [token]);
 
-  const enabledMfa = async () => {
+  const enabledMfa = useCallback(async () => {
     const url = '/api/auth/enabled_mfa';
     const headers = { Authorization: `Bearer ${token}` };
 
@@ -191,7 +201,7 @@ export const useAuth = (): AuthContextType => {
         throw err;
       }
     }
-  };
+  }, [setFlag, token, setToken]);
 
   return {
     flag,

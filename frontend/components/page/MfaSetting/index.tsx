@@ -21,7 +21,7 @@ export const MfaSetting: React.FC = (): JSX.Element => {
         console.error(err);
       }
     })();
-  }, []);
+  }, [auth]);
 
   return (
     <Container
