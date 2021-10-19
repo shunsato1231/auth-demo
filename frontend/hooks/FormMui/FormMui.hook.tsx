@@ -8,7 +8,7 @@ import {
   UseFormRegisterReturn,
 } from 'react-hook-form';
 
-type UseFormMuiRegister<TFieldValues extends FieldValues> = <
+export type UseFormMuiRegister<TFieldValues extends FieldValues> = <
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(
   name: TFieldName,
@@ -17,7 +17,7 @@ type UseFormMuiRegister<TFieldValues extends FieldValues> = <
   inputRef: UseFormRegisterReturn['ref'];
 };
 
-type UseFormMuiReturn = Omit<UseFormReturn, 'register'> & {
+export type UseFormMuiReturn = Omit<UseFormReturn, 'register'> & {
   register: UseFormMuiRegister<FieldValues>;
 };
 
