@@ -28,10 +28,10 @@ export const useSigninPage = (): useSigninType => {
     control: useSigninForm.control,
     defaultValue: '',
     rules: {
-      required: 'required email',
+      required: 'メールアドレスを入力してください。',
       pattern: {
         value: regex.email,
-        message: 'invalid email',
+        message: 'メールアドレスの形式が正しくありません。',
       },
     },
   };
@@ -40,20 +40,31 @@ export const useSigninPage = (): useSigninType => {
     control: useSigninForm.control,
     defaultValue: '',
     rules: {
-      required: 'required password',
+      required: 'パスワードを入力してください。',
       pattern: {
         value: regex.password,
-        message: 'invalid password',
+        message: 'パスワードの形式が正しくありません。',
       },
     },
   };
   const signin = useCallback(
     ({ email, password }: { email: string; password: string }) => {
-      auth.signIn(email, password).catch((err) => {
-        console.log(err);
+      auth.signIn(email, password).catch((res) => {
+        res.errors.map(
+          (error: { field: string; message: string; code: string }) => {
+            if (error.field) {
+              useSigninForm.setError(error.field, {
+                type: 'manual',
+                message: error.message,
+              });
+            } else {
+              alert(error.message);
+            }
+          }
+        );
       });
     },
-    [auth]
+    [auth, useSigninForm]
   );
 
   const useMfaVerifyForm = useForm({ mode: 'onTouched' });
@@ -62,18 +73,29 @@ export const useSigninPage = (): useSigninType => {
     control: useMfaVerifyForm.control,
     defaultValue: '',
     rules: {
-      required: 'required code',
+      required: 'ワンタイムパスワードを入力してください。',
       validate: (value: string) =>
-        value.length === 6 || 'Please enter the code in 6 digits',
+        value.length === 6 || 'ワンタイムパスワードは6桁で入力してください。',
     },
   };
   const verifyMfa = useCallback(
     ({ code }: { code: string }) => {
-      auth.verifiedMfa(code).catch((err) => {
-        console.error(err);
+      auth.verifiedMfa(code).catch((res) => {
+        res.errors.map(
+          (error: { field: string; message: string; code: string }) => {
+            if (error.field) {
+              useMfaVerifyForm.setError(error.field, {
+                type: 'manual',
+                message: error.message,
+              });
+            } else {
+              alert(error.message);
+            }
+          }
+        );
       });
     },
-    [auth]
+    [auth, useMfaVerifyForm]
   );
   const cancelVerifyMfa = useCallback(async () => {
     auth.signOut().then(async () => {

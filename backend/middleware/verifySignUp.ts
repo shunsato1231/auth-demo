@@ -15,20 +15,28 @@ const checkDuplicateEmail = async (
 
     if (user) {
       res.status(409).json({
-        code: 'emailAlreadyUse',
-        message: 'Email is already in use.',
-        error_user_title: '登録エラー',
-        error_user_message: 'このメールアドレスは既に登録されています。',
+        errors: [
+          {
+            resource: 'check_duplicate_email',
+            field: 'email',
+            code: 'duplicate_email',
+            message: 'このメールアドレスは既に使用されています。',
+          },
+        ],
       });
     } else {
       next();
     }
   } catch (err) {
     res.status(500).json({
-      code: 'unexpectedError',
-      message: 'Unexpected error.',
-      error_user_title: 'エラー',
-      error_user_message: '想定外のエラーが発生しました。',
+      errors: [
+        {
+          resource: 'check_duplicate_email',
+          field: '',
+          code: 'unexpected_error',
+          message: '想定外のエラーが発生しました。',
+        },
+      ],
     });
   }
 };
