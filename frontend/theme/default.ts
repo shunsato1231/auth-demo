@@ -30,9 +30,9 @@ export const theme = createTheme({
       contrastText: '#fff',
     },
     text: {
-      primary: 'rgba(51, 51, 51, 1)',
-      secondary: 'rgba(51, 51, 51, 0.54)',
-      disabled: 'rgba(51, 51, 51, 0.38)',
+      primary: grey[600],
+      secondary: grey[500],
+      disabled: grey[400],
     },
   },
   spacing: 4,
@@ -81,6 +81,7 @@ export const theme = createTheme({
           borderRadius: 8,
           '.MuiOutlinedInput-input': {
             zIndex: 10,
+            color: grey[800],
           },
           '.MuiOutlinedInput-notchedOutline': {
             legend: {
