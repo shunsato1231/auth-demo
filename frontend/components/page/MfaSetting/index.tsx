@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import {
-  Container,
-  Typography,
-  Card,
-  Box,
-  Stack,
-  TextField,
-} from '@mui/material';
-import { useAuthContext } from '~/hooks/Auth/Auth.context';
+import { Container, Typography, Card, Box } from '@mui/material';
+import { GetAppRounded, QrCode, CheckRounded } from '@mui/icons-material';
+
+import { Slider } from '~/components/ui/Slider';
+import { Stepper } from '~/components/ui/Stepper';
+import { DeviceDesc } from './DeviceDesc';
+import { useMfaSettingPage } from './hook';
+
 export const MfaSetting: React.FC = (): JSX.Element => {
-  const auth = useAuthContext();
-  const [qrImage, setQrImage] = useState<string>('');
-  useEffect(() => {
-    (async () => {
-      try {
-        const img = await auth.getMfaQr();
-        setQrImage(img);
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, [auth]);
+  const steps = ['Install App', 'Scan QR code', 'Verify code'];
+  const icons: { [index: string]: React.ReactElement } = {
+    1: <GetAppRounded />,
+    2: <QrCode />,
+    3: <CheckRounded />,
+  };
+  const { activeStep, toForwardStep } = useMfaSettingPage({
+    stepLength: 3,
+  });
 
   return (
     <Container
@@ -42,38 +38,25 @@ export const MfaSetting: React.FC = (): JSX.Element => {
         fontWeight="bold"
         sx={{
           color: 'primary.main',
-          mb: 12,
         }}>
         Mfa setting
       </Typography>
+      <Box
+        sx={{
+          width: ['90%', 450],
+          mt: 10,
+          mb: 5,
+        }}>
+        <Stepper activeStep={activeStep} steps={steps} icons={icons} />
+      </Box>
       <Card
         variant="outlined"
         sx={{
-          width: ['100%', 700],
+          width: ['100%', 580, 700],
         }}>
-        <Box
-          sx={{
-            my: {
-              xs: 6,
-              md: 8,
-            },
-            mx: {
-              xs: 4,
-              md: 6,
-            },
-          }}>
-          <Stack alignItems="center">
-            <img src={qrImage} />
-            <Typography variant="body2" component="p">
-              こちらのQRコードを登録してください。
-            </Typography>
-            <TextField
-              label="One time token"
-              placeholder="Place enter One time password"
-              fullWidth
-            />
-          </Stack>
-        </Box>
+        <Slider activeStep={activeStep + 1}>
+          <DeviceDesc toNext={toForwardStep} />
+        </Slider>
       </Card>
     </Container>
   );
