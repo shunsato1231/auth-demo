@@ -18,7 +18,7 @@ export interface AuthContextType {
   verifiedMfa: (code: string) => Promise<void>;
   getMfaQr: () => Promise<string>;
   getMfaSettingCode: () => Promise<string>;
-  enabledMfa: () => Promise<void>;
+  enabledMfa: (code1: string, code2: string) => Promise<void>;
 }
 
 export type userFlagType = {
@@ -197,34 +197,38 @@ export const useAuth = (): AuthContextType => {
     }
   }, [token]);
 
-  const enabledMfa = useCallback(async () => {
-    const url = '/api/auth/enabled_mfa';
-    const headers = { Authorization: `Bearer ${token}` };
-
-    try {
-      const response = await axios({
-        method: 'POST',
-        url,
-        headers,
-        withCredentials: true,
-      });
-      // setToken
-      const token: Token = response.data;
-      await setToken(token);
-      // setFlag
-      await setFlag({
-        mfaEnabled: true,
-        mfaVerified: false,
-        tokenVerified: true,
-      });
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        throw (err as AxiosError<IErrorResponse>).response?.data;
-      } else {
-        throw err;
+  const enabledMfa = useCallback(
+    async (code1: string, code2: string) => {
+      const url = '/api/auth/enabled_mfa';
+      const headers = { Authorization: `Bearer ${token}` };
+      const data = { code1, code2 };
+      try {
+        const response = await axios({
+          method: 'POST',
+          url,
+          data,
+          headers,
+          withCredentials: true,
+        });
+        // setToken
+        const token: Token = response.data;
+        await setToken(token);
+        // setFlag
+        await setFlag({
+          mfaEnabled: true,
+          mfaVerified: false,
+          tokenVerified: true,
+        });
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          throw (err as AxiosError<IErrorResponse>).response?.data;
+        } else {
+          throw err;
+        }
       }
-    }
-  }, [setFlag, token, setToken]);
+    },
+    [setToken, setFlag, token]
+  );
 
   return {
     flag,

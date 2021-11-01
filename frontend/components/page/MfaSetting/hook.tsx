@@ -60,11 +60,20 @@ export const useMfaSettingPage = ({
     }
   };
 
-  const verify = ({ code1, code2 }: { code1: string; code2: string }) => {
-    // TODO: verify One Time Password
-    console.log(code1);
-    console.log(code2);
-    toForwardStep();
+  const verify = async ({ code1, code2 }: { code1: string; code2: string }) => {
+    try {
+      await auth.enabledMfa(code1, code2);
+      toForwardStep();
+    } catch (err) {
+      useVerifyForm.setError('code1', {
+        type: 'manual',
+        message: 'ワンタイムパスワードが間違えています',
+      });
+      useVerifyForm.setError('code2', {
+        type: 'manual',
+        message: 'ワンタイムパスワードが間違えています',
+      });
+    }
   };
 
   const useVerifyForm = useForm({ mode: 'onTouched' });
