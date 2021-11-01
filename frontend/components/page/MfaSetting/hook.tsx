@@ -47,13 +47,13 @@ export const useMfaSettingPage = ({
     }
   };
 
-  const toggleMfaSettingCode = (
+  const toggleMfaSettingCode = async (
     _: React.SyntheticEvent,
     isExpanded: boolean
   ) => {
     if (isExpanded) {
       // TODO: get from api
-      const key = 'hogehoge';
+      const key = await auth.getMfaSettingCode();
       setMfaSettingCode(key);
     } else {
       setMfaSettingCode('');

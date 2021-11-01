@@ -21,6 +21,7 @@ const defaultAuthContext: AuthContextType = {
     /** default verifiedMfa **/
   },
   getMfaQr: async () => '',
+  getMfaSettingCode: async () => '',
   enabledMfa: async () => {
     /** default enabledMfa **/
   },

@@ -137,7 +137,7 @@ export const QrCodeScan: React.FC<QrCodeScanProps> = ({
               }}>
               {mfaSettingCode ? (
                 <Typography
-                  variant="subtitle1"
+                  variant="body2"
                   component="span"
                   sx={{
                     flexShrink: 1,

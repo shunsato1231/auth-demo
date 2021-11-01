@@ -17,6 +17,7 @@ export interface AuthContextType {
   signOut: () => Promise<void>;
   verifiedMfa: (code: string) => Promise<void>;
   getMfaQr: () => Promise<string>;
+  getMfaSettingCode: () => Promise<string>;
   enabledMfa: () => Promise<void>;
 }
 
@@ -174,6 +175,28 @@ export const useAuth = (): AuthContextType => {
     }
   }, [token]);
 
+  const getMfaSettingCode = useCallback(async () => {
+    const url = '/api/auth/mfa_setting_code';
+    const headers = { Authorization: `Bearer ${token}` };
+
+    try {
+      const response = await axios({
+        method: 'GET',
+        url,
+        headers,
+        withCredentials: true,
+      });
+
+      return String(response.data);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        throw (err as AxiosError<IErrorResponse>).response?.data;
+      } else {
+        throw err;
+      }
+    }
+  }, [token]);
+
   const enabledMfa = useCallback(async () => {
     const url = '/api/auth/enabled_mfa';
     const headers = { Authorization: `Bearer ${token}` };
@@ -210,6 +233,7 @@ export const useAuth = (): AuthContextType => {
     signOut,
     verifiedMfa,
     getMfaQr,
+    getMfaSettingCode,
     enabledMfa,
   };
 };
