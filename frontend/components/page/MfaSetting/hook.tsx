@@ -5,6 +5,11 @@ export interface useSigninType {
   toForwardStep: () => void;
   toBackwardStep: () => void;
   qrCode: string;
+  toggleMfaSettingCode: (
+    event: React.SyntheticEvent,
+    expanded: boolean
+  ) => void;
+  mfaSettingCode: string;
 }
 
 export const useMfaSettingPage = ({
@@ -15,6 +20,7 @@ export const useMfaSettingPage = ({
   const auth = useAuthContext();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [qrCode, setQrCode] = useState<string>('');
+  const [mfaSettingCode, setMfaSettingCode] = useState<string>('');
 
   useEffect(() => {
     if (activeStep === 1 && !qrCode) {
@@ -36,10 +42,25 @@ export const useMfaSettingPage = ({
     }
   };
 
+  const toggleMfaSettingCode = (
+    _: React.SyntheticEvent,
+    isExpanded: boolean
+  ) => {
+    if (isExpanded) {
+      // TODO: get from api
+      const key = 'hogehoge';
+      setMfaSettingCode(key);
+    } else {
+      setMfaSettingCode('');
+    }
+  };
+
   return {
     activeStep,
     toForwardStep,
     toBackwardStep,
     qrCode,
+    toggleMfaSettingCode,
+    mfaSettingCode,
   };
 };

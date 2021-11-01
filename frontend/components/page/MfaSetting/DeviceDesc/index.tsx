@@ -34,6 +34,7 @@ export const DeviceDesc: React.FC<DeviceDescProps> = ({
         互換性のあるアプリケーションをインストールしてください。
       </Typography>
       <Stack
+        spacing={4}
         justifyContent="space-around"
         sx={{
           flexGrow: 0.5,

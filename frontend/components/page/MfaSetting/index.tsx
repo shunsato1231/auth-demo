@@ -6,6 +6,7 @@ import { GetAppRounded, QrCode, CheckRounded } from '@mui/icons-material';
 import { Slider } from '~/components/ui/Slider';
 import { Stepper } from '~/components/ui/Stepper';
 import { DeviceDesc } from './DeviceDesc';
+import { QrCodeScan } from './QrCodeScan';
 import { useMfaSettingPage } from './hook';
 
 export const MfaSetting: React.FC = (): JSX.Element => {
@@ -15,7 +16,14 @@ export const MfaSetting: React.FC = (): JSX.Element => {
     2: <QrCode />,
     3: <CheckRounded />,
   };
-  const { activeStep, toForwardStep } = useMfaSettingPage({
+  const {
+    activeStep,
+    toForwardStep,
+    toBackwardStep,
+    qrCode,
+    toggleMfaSettingCode,
+    mfaSettingCode,
+  } = useMfaSettingPage({
     stepLength: 3,
   });
 
@@ -56,6 +64,13 @@ export const MfaSetting: React.FC = (): JSX.Element => {
         }}>
         <Slider activeStep={activeStep + 1}>
           <DeviceDesc toNext={toForwardStep} />
+          <QrCodeScan
+            toNext={toForwardStep}
+            toPrev={toBackwardStep}
+            qrCode={qrCode}
+            toggleMfaSettingCode={toggleMfaSettingCode}
+            mfaSettingCode={mfaSettingCode}
+          />
         </Slider>
       </Card>
     </Container>
