@@ -30,7 +30,7 @@ export default (app: Express): void => {
 
   app.post(
     '/auth/enabled_mfa',
-    [authJwt.verifyToken, authJwt.isDisabledMfa, authJwt.verifyTOTP],
+    [authJwt.verifyToken, authJwt.isDisabledMfa, authJwt.verifyMultiTOTP],
     enableMfa
   );
 

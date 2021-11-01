@@ -212,6 +212,89 @@ export const verifyTOTP = async (
   });
 };
 
+export const verifyMultiTOTP = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const customReq = req as IRequest;
+  const userId = customReq.userId;
+  const oneTimePassword1 = req.body.code1;
+  const oneTimePassword2 = req.body.code2;
+
+  if (!oneTimePassword1 || !oneTimePassword2) {
+    res.status(401).json({
+      errors: [
+        {
+          resource: 'verify_totp',
+          field: 'code',
+          code: 'missing_field',
+          message: 'ワンタイムパスワードが入力されていません。',
+        },
+      ],
+    });
+    return;
+  }
+
+  const { mfaSecretKey } = await User.findById(userId).catch(() => {
+    res.status(400).json({
+      errors: [
+        {
+          resource: 'verify_totp',
+          field: '',
+          code: 'invalid_token',
+          message: 'トークンが正しくありません。ログインし直してください。',
+        },
+      ],
+    });
+    return;
+  });
+
+  if (!mfaSecretKey) {
+    res.status(403).json({
+      errors: [
+        {
+          resource: 'verify_totp',
+          field: '',
+          code: 'missing_secret_key',
+          message: '2段階認証が正しく設定されていません。',
+        },
+      ],
+    });
+    return;
+  }
+
+  // One Time Password 1
+  const window = 3;
+  let code1Window = null;
+  for (let errorWindow = -window; errorWindow <= +window; errorWindow++) {
+    const totp = generateTOTP(mfaSecretKey, errorWindow);
+    if (oneTimePassword1 === totp) {
+      code1Window = errorWindow;
+    }
+  }
+
+  // One Time Password 2
+  if (code1Window) {
+    const totp = generateTOTP(mfaSecretKey, code1Window + 1);
+    if (oneTimePassword2 === totp) {
+      next();
+      return;
+    }
+  }
+
+  res.status(401).json({
+    errors: [
+      {
+        resource: 'verify_totp',
+        field: 'code',
+        code: 'invalid_field',
+        message: 'ワンタイムパスワードが正しくありません。',
+      },
+    ],
+  });
+};
+
 const isDisabledMfa = async (
   req: Request,
   res: Response,
@@ -322,6 +405,7 @@ export const isMfaVerified = async (
 export const authJwt = {
   verifyToken,
   verifyTOTP,
+  verifyMultiTOTP,
   isDisabledMfa,
   isMfaVerified,
 };

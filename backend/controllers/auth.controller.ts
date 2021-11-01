@@ -255,7 +255,7 @@ export const enableMfa = async (req: Request, res: Response): Promise<void> => {
             resource: 'verify_one_time_password',
             field: '',
             code: 'unexpected_error',
-            message: '二段階認証が設定されていません。',
+            message: 'QRコードの登録が行われていません。',
           },
         ],
       });
