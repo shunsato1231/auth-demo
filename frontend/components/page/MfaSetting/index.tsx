@@ -9,6 +9,7 @@ import { Stepper } from '~/components/ui/Stepper';
 import { DeviceDesc } from './DeviceDesc';
 import { QrCodeScan } from './QrCodeScan';
 import { Verify } from './Verify';
+import { Completed } from './Completed';
 import { useMfaSettingPage } from './hook';
 
 export const MfaSetting: React.FC = (): JSX.Element => {
@@ -86,6 +87,7 @@ export const MfaSetting: React.FC = (): JSX.Element => {
               verify={verify}
             />
           </FormProvider>
+          <Completed />
         </Slider>
       </Card>
     </Container>
