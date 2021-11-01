@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormProvider } from 'react-hook-form';
 
 import { Container, Typography, Card, Box } from '@mui/material';
 import { GetAppRounded, QrCode, CheckRounded } from '@mui/icons-material';
@@ -7,6 +8,7 @@ import { Slider } from '~/components/ui/Slider';
 import { Stepper } from '~/components/ui/Stepper';
 import { DeviceDesc } from './DeviceDesc';
 import { QrCodeScan } from './QrCodeScan';
+import { Verify } from './Verify';
 import { useMfaSettingPage } from './hook';
 
 export const MfaSetting: React.FC = (): JSX.Element => {
@@ -23,6 +25,10 @@ export const MfaSetting: React.FC = (): JSX.Element => {
     qrCode,
     toggleMfaSettingCode,
     mfaSettingCode,
+    useVerifyForm,
+    verify,
+    code1ControllerProps,
+    code2ControllerProps,
   } = useMfaSettingPage({
     stepLength: 3,
   });
@@ -71,6 +77,15 @@ export const MfaSetting: React.FC = (): JSX.Element => {
             toggleMfaSettingCode={toggleMfaSettingCode}
             mfaSettingCode={mfaSettingCode}
           />
+          <FormProvider {...useVerifyForm}>
+            <Verify
+              toNext={toForwardStep}
+              toPrev={toBackwardStep}
+              code1ControllerProps={code1ControllerProps}
+              code2ControllerProps={code2ControllerProps}
+              verify={verify}
+            />
+          </FormProvider>
         </Slider>
       </Card>
     </Container>
