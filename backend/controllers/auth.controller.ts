@@ -349,3 +349,51 @@ export const generateMfaQRCode = async (
     });
   }
 };
+
+export const generateMfaSettingCode = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const customReq = req as IRequest;
+  const userId = customReq.userId;
+  try {
+    let { mfaSecretKey } = await User.findById(userId);
+
+    if (!mfaSecretKey) {
+      const buffer = await util.promisify(crypto.randomBytes)(14);
+      mfaSecretKey = base32Encode(buffer, 'RFC4648', { padding: false });
+
+      try {
+        await User.findOneAndUpdate(
+          { _id: userId },
+          { $set: { mfaSecretKey: mfaSecretKey } },
+          { useFindAndModify: false }
+        );
+      } catch (err) {
+        res.status(500).json({
+          errors: [
+            {
+              resource: 'generate_mfa_qr_code',
+              field: '',
+              code: 'unexpected_error',
+              message: '想定外のエラーが発生しました。',
+            },
+          ],
+        });
+      }
+    }
+
+    res.status(200).json(mfaSecretKey);
+  } catch (err) {
+    res.status(500).json({
+      errors: [
+        {
+          resource: 'generate_mfa_qr_code',
+          field: '',
+          code: 'unexpected_error',
+          message: '想定外のエラーが発生しました。',
+        },
+      ],
+    });
+  }
+};

@@ -6,6 +6,7 @@ import {
   verifyOneTimePassword,
   enableMfa,
   generateMfaQRCode,
+  generateMfaSettingCode,
 } from '../controllers/auth.controller';
 
 export default (app: Express): void => {
@@ -37,5 +38,11 @@ export default (app: Express): void => {
     '/auth/mfa_qr_code',
     [authJwt.verifyToken, authJwt.isDisabledMfa],
     generateMfaQRCode
+  );
+
+  app.get(
+    '/auth/mfa_setting_code',
+    [authJwt.verifyToken, authJwt.isDisabledMfa],
+    generateMfaSettingCode
   );
 };
