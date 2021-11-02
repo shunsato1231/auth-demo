@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormProvider } from 'react-hook-form';
 
 import { Container, Typography, Card, Box } from '@mui/material';
 import { GetAppRounded, QrCode, CheckRounded } from '@mui/icons-material';
@@ -21,16 +20,10 @@ export const MfaSetting: React.FC = (): JSX.Element => {
   };
   const {
     activeStep,
-    toForwardStep,
-    toBackwardStep,
-    qrCode,
-    toggleMfaSettingCode,
-    mfaSettingCode,
-    useVerifyForm,
-    verify,
-    code1ControllerProps,
-    code2ControllerProps,
-    signOut,
+    DeviceDescProps,
+    QrCodeScanProps,
+    VerifyProps,
+    CompletedProps,
   } = useMfaSettingPage({
     stepLength: 3,
   });
@@ -71,23 +64,10 @@ export const MfaSetting: React.FC = (): JSX.Element => {
           width: ['100%', 580, 700],
         }}>
         <Slider activeStep={activeStep + 1}>
-          <DeviceDesc toForwardStep={toForwardStep} />
-          <QrCodeScan
-            toForwardStep={toForwardStep}
-            toBackwardStep={toBackwardStep}
-            qrCode={qrCode}
-            toggleMfaSettingCode={toggleMfaSettingCode}
-            mfaSettingCode={mfaSettingCode}
-          />
-          <FormProvider {...useVerifyForm}>
-            <Verify
-              toBackwardStep={toBackwardStep}
-              code1ControllerProps={code1ControllerProps}
-              code2ControllerProps={code2ControllerProps}
-              verify={verify}
-            />
-          </FormProvider>
-          <Completed signOut={signOut} />
+          <DeviceDesc {...DeviceDescProps} />
+          <QrCodeScan {...QrCodeScanProps} />
+          <Verify {...VerifyProps} />
+          <Completed {...CompletedProps} />
         </Slider>
       </Card>
     </Container>

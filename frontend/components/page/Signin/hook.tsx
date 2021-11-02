@@ -1,18 +1,14 @@
 import { useCallback, useMemo } from 'react';
-import { useForm, UseFormReturn, UseControllerProps } from 'react-hook-form';
+import { useForm, UseControllerProps } from 'react-hook-form';
 import { useAuthContext } from '~/hooks/Auth/Auth.context';
 import { regex } from '~/utils/regex';
+import { SigninFormProps } from './SigninForm';
+import { VerifyMfaFormProps } from './VerifyMfaForm';
 
 export interface useSigninType {
   step: number;
-  useSigninForm: UseFormReturn;
-  emailControllerProps: UseControllerProps;
-  passwordControllerProps: UseControllerProps;
-  signin: ({ email, password }: { email: string; password: string }) => void;
-  useMfaVerifyForm: UseFormReturn;
-  codeControllerProps: UseControllerProps;
-  verifyMfa: ({ code }: { code: string }) => void;
-  cancelVerifyMfa: () => Promise<void>;
+  SigninFormProps: SigninFormProps;
+  VerifyMfaFormProps: VerifyMfaFormProps;
 }
 
 export const useSigninPage = (): useSigninType => {
@@ -67,10 +63,10 @@ export const useSigninPage = (): useSigninType => {
     [auth, useSigninForm]
   );
 
-  const useMfaVerifyForm = useForm({ mode: 'onTouched' });
+  const useVerifyMfaForm = useForm({ mode: 'onTouched' });
   const codeControllerProps = {
     name: 'code',
-    control: useMfaVerifyForm.control,
+    control: useVerifyMfaForm.control,
     defaultValue: '',
     rules: {
       required: 'ワンタイムパスワードを入力してください。',
@@ -84,7 +80,7 @@ export const useSigninPage = (): useSigninType => {
         res.errors.map(
           (error: { field: string; message: string; code: string }) => {
             if (error.field) {
-              useMfaVerifyForm.setError(error.field, {
+              useVerifyMfaForm.setError(error.field, {
                 type: 'manual',
                 message: error.message,
               });
@@ -95,24 +91,28 @@ export const useSigninPage = (): useSigninType => {
         );
       });
     },
-    [auth, useMfaVerifyForm]
+    [auth, useVerifyMfaForm]
   );
   const cancelVerifyMfa = useCallback(async () => {
     auth.signOut().then(async () => {
       useSigninForm.reset({ password: '', email: '' });
-      useMfaVerifyForm.reset({ code: '' });
+      useVerifyMfaForm.reset({ code: '' });
     });
-  }, [auth, useSigninForm, useMfaVerifyForm]);
+  }, [auth, useSigninForm, useVerifyMfaForm]);
 
   return {
     step,
-    useSigninForm,
-    emailControllerProps,
-    passwordControllerProps,
-    signin,
-    useMfaVerifyForm,
-    codeControllerProps,
-    verifyMfa,
-    cancelVerifyMfa,
+    SigninFormProps: {
+      signin,
+      emailControllerProps,
+      passwordControllerProps,
+      useSigninForm,
+    },
+    VerifyMfaFormProps: {
+      verifyMfa,
+      cancelVerifyMfa,
+      codeControllerProps,
+      useVerifyMfaForm,
+    },
   };
 };

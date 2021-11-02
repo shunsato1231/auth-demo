@@ -1,25 +1,27 @@
 import React from 'react';
 import {
   UseControllerProps,
-  useFormContext,
+  UseFormReturn,
   useController,
 } from 'react-hook-form';
 import { Stack, Button, Typography, TextField } from '@mui/material';
 import { ArrowBackIosNew } from '@mui/icons-material';
 import { theme } from '~/theme/default';
 export interface VerifyProps {
+  useVerifyForm: UseFormReturn;
   toBackwardStep: () => void;
   verify: ({ code1, code2 }: { code1: string; code2: string }) => void;
   code1ControllerProps: UseControllerProps;
   code2ControllerProps: UseControllerProps;
 }
 export const Verify: React.FC<VerifyProps> = ({
+  useVerifyForm,
   toBackwardStep,
   code1ControllerProps,
   code2ControllerProps,
   verify,
 }): JSX.Element => {
-  const { handleSubmit } = useFormContext();
+  const { handleSubmit } = useVerifyForm;
   const {
     field: { ref: code1Ref, ...code1InputProps },
     fieldState: { error: code1Errors },

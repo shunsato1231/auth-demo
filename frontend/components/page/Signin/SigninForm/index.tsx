@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  UseControllerProps,
-  useFormContext,
   useController,
+  UseControllerProps,
+  UseFormReturn,
 } from 'react-hook-form';
 
 import {
@@ -21,11 +21,17 @@ export interface SigninFormProps {
   signin: ({ email, password }: { email: string; password: string }) => void;
   emailControllerProps: UseControllerProps;
   passwordControllerProps: UseControllerProps;
+  useSigninForm: UseFormReturn;
 }
 
 export const SigninForm: React.FC<SigninFormProps> = React.memo(
-  ({ signin, emailControllerProps, passwordControllerProps }) => {
-    const { handleSubmit } = useFormContext();
+  ({
+    signin,
+    emailControllerProps,
+    passwordControllerProps,
+    useSigninForm,
+  }) => {
+    const { handleSubmit } = useSigninForm;
     const {
       field: { ref: emailRef, ...emailInputProps },
       fieldState: { error: emailErrors },

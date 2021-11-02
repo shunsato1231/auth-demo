@@ -1,8 +1,8 @@
 import React from 'react';
 import {
   UseControllerProps,
-  useFormContext,
   useController,
+  UseFormReturn,
 } from 'react-hook-form';
 
 import {
@@ -19,11 +19,12 @@ export interface VerifyMfaFormProps {
   verifyMfa: ({ code }: { code: string }) => void;
   cancelVerifyMfa: () => Promise<void>;
   codeControllerProps: UseControllerProps;
+  useVerifyMfaForm: UseFormReturn;
 }
 
 export const VerifyMfaForm: React.FC<VerifyMfaFormProps> = React.memo(
-  ({ verifyMfa, cancelVerifyMfa, codeControllerProps }) => {
-    const { handleSubmit } = useFormContext();
+  ({ verifyMfa, cancelVerifyMfa, codeControllerProps, useVerifyMfaForm }) => {
+    const { handleSubmit } = useVerifyMfaForm;
     const {
       field: { ref, ...inputProps },
       fieldState: { error },

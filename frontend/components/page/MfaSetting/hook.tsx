@@ -1,21 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useForm, UseFormReturn, UseControllerProps } from 'react-hook-form';
+import { DeviceDescProps } from './DeviceDesc';
+import { QrCodeScanProps } from './QrCodeScan';
+import { VerifyProps } from './Verify';
+import { CompletedProps } from './Completed';
+
+import { useForm } from 'react-hook-form';
 import { useAuthContext } from '~/hooks/Auth/Auth.context';
 export interface useSigninType {
   activeStep: number;
-  toForwardStep: () => void;
-  toBackwardStep: () => void;
-  qrCode: string;
-  toggleMfaSettingCode: (
-    event: React.SyntheticEvent,
-    expanded: boolean
-  ) => void;
-  mfaSettingCode: string;
-  useVerifyForm: UseFormReturn;
-  verify: ({ code1, code2 }: { code1: string; code2: string }) => void;
-  code1ControllerProps: UseControllerProps;
-  code2ControllerProps: UseControllerProps;
-  signOut: () => Promise<void>;
+  DeviceDescProps: DeviceDescProps;
+  QrCodeScanProps: QrCodeScanProps;
+  VerifyProps: VerifyProps;
+  CompletedProps: CompletedProps;
 }
 
 export const useMfaSettingPage = ({
@@ -103,15 +99,25 @@ export const useMfaSettingPage = ({
 
   return {
     activeStep,
-    toForwardStep,
-    toBackwardStep,
-    qrCode,
-    toggleMfaSettingCode,
-    mfaSettingCode,
-    useVerifyForm,
-    verify,
-    code1ControllerProps,
-    code2ControllerProps,
-    signOut,
+    DeviceDescProps: {
+      toForwardStep,
+    },
+    QrCodeScanProps: {
+      qrCode,
+      toForwardStep,
+      toBackwardStep,
+      toggleMfaSettingCode,
+      mfaSettingCode,
+    },
+    VerifyProps: {
+      useVerifyForm,
+      toBackwardStep,
+      code1ControllerProps,
+      code2ControllerProps,
+      verify,
+    },
+    CompletedProps: {
+      signOut,
+    },
   };
 };
