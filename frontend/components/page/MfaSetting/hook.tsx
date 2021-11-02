@@ -15,6 +15,7 @@ export interface useSigninType {
   verify: ({ code1, code2 }: { code1: string; code2: string }) => void;
   code1ControllerProps: UseControllerProps;
   code2ControllerProps: UseControllerProps;
+  signOut: () => Promise<void>;
 }
 
 export const useMfaSettingPage = ({
@@ -98,6 +99,8 @@ export const useMfaSettingPage = ({
     },
   };
 
+  const signOut = auth.signOut;
+
   return {
     activeStep,
     toForwardStep,
@@ -109,5 +112,6 @@ export const useMfaSettingPage = ({
     verify,
     code1ControllerProps,
     code2ControllerProps,
+    signOut,
   };
 };

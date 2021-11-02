@@ -135,9 +135,10 @@ export const useAuth = (): AuthContextType => {
         const token: Token = response.data;
         await setToken(token);
         // setFlag
-        const newAuth = flag;
-        newAuth.mfaVerified = true;
-        await setFlag(newAuth);
+        await setFlag({
+          ...flag,
+          mfaVerified: true,
+        });
       } catch (err) {
         if (axios.isAxiosError(err)) {
           throw (err as AxiosError<IErrorResponse>).response?.data;
@@ -213,12 +214,6 @@ export const useAuth = (): AuthContextType => {
         // setToken
         const token: Token = response.data;
         await setToken(token);
-        // setFlag
-        await setFlag({
-          mfaEnabled: true,
-          mfaVerified: false,
-          tokenVerified: true,
-        });
       } catch (err) {
         if (axios.isAxiosError(err)) {
           throw (err as AxiosError<IErrorResponse>).response?.data;
@@ -227,7 +222,7 @@ export const useAuth = (): AuthContextType => {
         }
       }
     },
-    [setToken, setFlag, token]
+    [setToken, token]
   );
 
   return {

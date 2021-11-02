@@ -1,8 +1,13 @@
 import React from 'react';
-import { Stack, Typography, Link } from '@mui/material';
+import { Stack, Typography, Button } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
 import { theme } from '~/theme/default';
-export const Completed: React.FC = (): JSX.Element => {
+export interface CompletedProps {
+  signOut: () => Promise<void>;
+}
+export const Completed: React.FC<CompletedProps> = ({
+  signOut,
+}): JSX.Element => {
   return (
     <Stack
       justifyContent="center"
@@ -27,7 +32,7 @@ export const Completed: React.FC = (): JSX.Element => {
         sx={{
           mb: 2,
         }}>
-        設定が完了しました
+        設定が完了しました。ログインし直してください。
       </Typography>
       <CheckCircle
         sx={{
@@ -35,15 +40,16 @@ export const Completed: React.FC = (): JSX.Element => {
           fontSize: 180,
         }}
       />
-      <Link
-        href="/"
-        variant="body2"
-        color="inherit"
+      <Button
+        variant="text"
+        onClick={signOut}
         sx={{
           mt: 4,
         }}>
-        ホームに戻る
-      </Link>
+        <Typography variant="body2" color="inherit">
+          ログインページに戻る
+        </Typography>
+      </Button>
     </Stack>
   );
 };

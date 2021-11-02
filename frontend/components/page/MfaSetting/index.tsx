@@ -30,6 +30,7 @@ export const MfaSetting: React.FC = (): JSX.Element => {
     verify,
     code1ControllerProps,
     code2ControllerProps,
+    signOut,
   } = useMfaSettingPage({
     stepLength: 3,
   });
@@ -87,7 +88,7 @@ export const MfaSetting: React.FC = (): JSX.Element => {
               verify={verify}
             />
           </FormProvider>
-          <Completed />
+          <Completed signOut={signOut} />
         </Slider>
       </Card>
     </Container>
