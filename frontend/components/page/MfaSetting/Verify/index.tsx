@@ -8,15 +8,13 @@ import { Stack, Button, Typography, TextField } from '@mui/material';
 import { ArrowBackIosNew } from '@mui/icons-material';
 import { theme } from '~/theme/default';
 export interface VerifyProps {
-  toNext: () => void;
-  toPrev: () => void;
+  toBackwardStep: () => void;
   verify: ({ code1, code2 }: { code1: string; code2: string }) => void;
   code1ControllerProps: UseControllerProps;
   code2ControllerProps: UseControllerProps;
 }
 export const Verify: React.FC<VerifyProps> = ({
-  // toNext,
-  toPrev,
+  toBackwardStep,
   code1ControllerProps,
   code2ControllerProps,
   verify,
@@ -100,7 +98,7 @@ export const Verify: React.FC<VerifyProps> = ({
         </Stack>
       </form>
       <Button
-        onClick={() => toPrev()}
+        onClick={() => toBackwardStep()}
         variant="text"
         sx={{
           mr: 'auto',

@@ -3,10 +3,10 @@ import { Stack, Button, Typography, Link } from '@mui/material';
 import { OpenInNew, ChevronRight } from '@mui/icons-material';
 import { theme } from '~/theme/default';
 export interface DeviceDescProps {
-  toNext: () => void;
+  toForwardStep: () => void;
 }
 export const DeviceDesc: React.FC<DeviceDescProps> = ({
-  toNext,
+  toForwardStep,
 }): JSX.Element => {
   return (
     <Stack
@@ -95,7 +95,7 @@ export const DeviceDesc: React.FC<DeviceDescProps> = ({
         </Typography>
       </Stack>
       <Button
-        onClick={() => toNext()}
+        onClick={() => toForwardStep()}
         variant="outlined"
         sx={{
           ml: 'auto',

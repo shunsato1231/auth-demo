@@ -18,8 +18,8 @@ import { CopyToClipBoard } from '~/components/ui/CopyToClipBoard';
 import { theme } from '~/theme/default';
 export interface QrCodeScanProps {
   qrCode: string;
-  toNext: () => void;
-  toPrev: () => void;
+  toForwardStep: () => void;
+  toBackwardStep: () => void;
   toggleMfaSettingCode: (
     event: React.SyntheticEvent,
     expanded: boolean
@@ -28,8 +28,8 @@ export interface QrCodeScanProps {
 }
 export const QrCodeScan: React.FC<QrCodeScanProps> = ({
   qrCode,
-  toNext,
-  toPrev,
+  toForwardStep,
+  toBackwardStep,
   toggleMfaSettingCode,
   mfaSettingCode,
 }): JSX.Element => {
@@ -201,7 +201,7 @@ export const QrCodeScan: React.FC<QrCodeScanProps> = ({
           alignItems: 'center',
         }}>
         <Button
-          onClick={() => toPrev()}
+          onClick={() => toBackwardStep()}
           variant="text"
           sx={{
             px: 0,
@@ -215,7 +215,7 @@ export const QrCodeScan: React.FC<QrCodeScanProps> = ({
           />
         </Button>
         <Button
-          onClick={() => toNext()}
+          onClick={() => toForwardStep()}
           variant="outlined"
           sx={{
             pr: 2,

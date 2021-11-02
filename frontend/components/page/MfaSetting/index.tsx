@@ -71,18 +71,17 @@ export const MfaSetting: React.FC = (): JSX.Element => {
           width: ['100%', 580, 700],
         }}>
         <Slider activeStep={activeStep + 1}>
-          <DeviceDesc toNext={toForwardStep} />
+          <DeviceDesc toForwardStep={toForwardStep} />
           <QrCodeScan
-            toNext={toForwardStep}
-            toPrev={toBackwardStep}
+            toForwardStep={toForwardStep}
+            toBackwardStep={toBackwardStep}
             qrCode={qrCode}
             toggleMfaSettingCode={toggleMfaSettingCode}
             mfaSettingCode={mfaSettingCode}
           />
           <FormProvider {...useVerifyForm}>
             <Verify
-              toNext={toForwardStep}
-              toPrev={toBackwardStep}
+              toBackwardStep={toBackwardStep}
               code1ControllerProps={code1ControllerProps}
               code2ControllerProps={code2ControllerProps}
               verify={verify}
