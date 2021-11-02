@@ -1,16 +1,10 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHomePage } from './hook';
 
 import { Container, Typography, Stack, Button } from '@mui/material';
-import { useAuthContext } from '~/hooks/Auth/Auth.context';
 export const Home: React.FC = (): JSX.Element => {
-  const history = useHistory();
-  const auth = useAuthContext();
+  const { signOut, mfaEnabledFlag, pushMfaSetting } = useHomePage();
 
-  const signOut = async () => {
-    await auth.signOut();
-    history.push('signin');
-  };
   return (
     <Container
       sx={{
@@ -34,8 +28,8 @@ export const Home: React.FC = (): JSX.Element => {
         }}>
         Home
       </Typography>
-      <p>{auth.flag.mfaEnabled}</p>
-      {auth.flag.mfaEnabled ? (
+      <p>{mfaEnabledFlag}</p>
+      {mfaEnabledFlag ? (
         <p>2段階認証は正しく設定されています。</p>
       ) : (
         <>
@@ -51,13 +45,13 @@ export const Home: React.FC = (): JSX.Element => {
           },
         }}
         spacing={4}>
-        {!auth.flag.mfaEnabled && (
+        {!mfaEnabledFlag && (
           <Button
             type="submit"
             variant="contained"
             size="medium"
             fullWidth
-            onClick={() => history.push('/mfa-setting')}>
+            onClick={() => pushMfaSetting()}>
             2段階認証を有効にする
           </Button>
         )}
