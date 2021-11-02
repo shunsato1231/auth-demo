@@ -13,6 +13,7 @@ import {
   Button,
   TextField,
   Container,
+  Link,
 } from '@mui/material';
 import { ToggleTextField } from '~/components/ui/ToggleTextField';
 
@@ -113,6 +114,16 @@ export const SigninForm: React.FC<SigninFormProps> = React.memo(
               </Stack>
             </form>
           </Card>
+          <Link
+            href="/signup"
+            variant="body2"
+            sx={{
+              display: 'table',
+              mt: 4,
+              ml: 'auto',
+            }}>
+            ユーザー登録はこちら
+          </Link>
         </Box>
       </Container>
     );

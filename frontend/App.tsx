@@ -10,6 +10,7 @@ import { theme } from '~/theme/default';
 import { CssBaseline } from '@mui/material';
 
 import { Signin } from '~/components/page/Signin';
+import { Signup } from '~/components/page/Signup';
 import { Home } from '~/components/page/Home';
 import { MfaSetting } from '~/components/page/MfaSetting';
 
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Router>
           <Switch>
             <GuestRoute path="/signin" component={Signin} toRedirect="/" />
+            <GuestRoute path="/signup" component={Signup} toRedirect="/" />
             <MfaSettingRoute
               path="/mfa-setting"
               component={MfaSetting}
