@@ -9,10 +9,10 @@ const defaultAuthContext: AuthContextType = {
     tokenVerified: false,
   },
   signUp: async () => {
-    /** default signup **/
+    /** default signUp **/
   },
   signIn: async () => {
-    /** default signin **/
+    /** default signIn **/
   },
   signOut: async () => {
     /** default signout **/

@@ -1,13 +1,13 @@
 import React from 'react';
-import { useSigninPage } from './hook';
-import { SigninForm } from './SigninForm';
+import { useSignInPage } from './hook';
+import { SignInForm } from './SignInForm';
 import { VerifyMfaForm } from './VerifyMfaForm';
 import { Slider } from '~/components/ui/Slider';
 
 import { Box } from '@mui/material';
 
-export const Signin: React.FC = (): JSX.Element => {
-  const { step, SigninFormProps, VerifyMfaFormProps } = useSigninPage();
+export const SignIn: React.FC = (): JSX.Element => {
+  const { step, SignInFormProps, VerifyMfaFormProps } = useSignInPage();
 
   return (
     <Box
@@ -16,7 +16,7 @@ export const Signin: React.FC = (): JSX.Element => {
         height: '100vh',
       }}>
       <Slider activeStep={step}>
-        <SigninForm {...SigninFormProps} />
+        <SignInForm {...SignInFormProps} />
         <VerifyMfaForm {...VerifyMfaFormProps} />
       </Slider>
     </Box>

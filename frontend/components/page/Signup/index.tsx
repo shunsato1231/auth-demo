@@ -1,6 +1,6 @@
 import React from 'react';
 import { useController } from 'react-hook-form';
-import { useSignupPage } from './hook';
+import { useSignUpPage } from './hook';
 import {
   Box,
   Typography,
@@ -12,16 +12,16 @@ import {
 } from '@mui/material';
 import { ToggleTextField } from '~/components/ui/ToggleTextField';
 
-export const Signup: React.FC = React.memo(() => {
+export const SignUp: React.FC = () => {
   const {
-    useSignupForm,
+    useSignUpForm,
     emailControllerProps,
     passwordControllerProps,
     confirmPasswordControllerProps,
-    signup,
-  } = useSignupPage();
+    signUp,
+  } = useSignUpPage();
 
-  const { handleSubmit } = useSignupForm;
+  const { handleSubmit } = useSignUpForm;
   const {
     field: { ref: emailRef, ...emailInputProps },
     fieldState: { error: emailErrors },
@@ -61,7 +61,7 @@ export const Signup: React.FC = React.memo(() => {
             color: 'primary.main',
             mb: 6,
           }}>
-          Signup
+          SignUp
         </Typography>
         <Card
           variant="outlined"
@@ -76,7 +76,7 @@ export const Signup: React.FC = React.memo(() => {
               md: 6,
             },
           }}>
-          <form onSubmit={handleSubmit(signup)}>
+          <form onSubmit={handleSubmit(signUp)}>
             <Stack
               spacing={{
                 xs: 4,
@@ -104,8 +104,8 @@ export const Signup: React.FC = React.memo(() => {
               <ToggleTextField
                 error={confirmPasswordErrors ? true : false}
                 helperText={confirmPasswordErrors?.message}
-                placeholder="Password"
-                label="Password"
+                placeholder="Confirm Password"
+                label="Confirm Password"
                 fullWidth
                 inputRef={confirmPasswordRef}
                 {...confirmPasswordInputProps}
@@ -126,6 +126,4 @@ export const Signup: React.FC = React.memo(() => {
       </Box>
     </Container>
   );
-});
-
-Signup.displayName = 'Signup';
+};

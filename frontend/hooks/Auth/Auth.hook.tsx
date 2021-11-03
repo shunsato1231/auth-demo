@@ -38,7 +38,7 @@ export const useAuth = (): AuthContextType => {
 
   const signUp = useCallback(
     async (email: string, password: string) => {
-      const url = '/api/auth/signup';
+      const url = '/api/auth/signUp';
       const data = {
         email,
         password,
@@ -72,7 +72,7 @@ export const useAuth = (): AuthContextType => {
 
   const signIn = useCallback(
     async (email: string, password: string) => {
-      const url = '/api/auth/signin';
+      const url = '/api/auth/signIn';
       const data = {
         email,
         password,

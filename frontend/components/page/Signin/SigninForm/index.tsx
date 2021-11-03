@@ -17,21 +17,21 @@ import {
 } from '@mui/material';
 import { ToggleTextField } from '~/components/ui/ToggleTextField';
 
-export interface SigninFormProps {
-  signin: ({ email, password }: { email: string; password: string }) => void;
+export interface SignInFormProps {
+  signIn: ({ email, password }: { email: string; password: string }) => void;
   emailControllerProps: UseControllerProps;
   passwordControllerProps: UseControllerProps;
-  useSigninForm: UseFormReturn;
+  useSignInForm: UseFormReturn;
 }
 
-export const SigninForm: React.FC<SigninFormProps> = React.memo(
+export const SignInForm: React.FC<SignInFormProps> = React.memo(
   ({
-    signin,
+    signIn,
     emailControllerProps,
     passwordControllerProps,
-    useSigninForm,
+    useSignInForm,
   }) => {
-    const { handleSubmit } = useSigninForm;
+    const { handleSubmit } = useSignInForm;
     const {
       field: { ref: emailRef, ...emailInputProps },
       fieldState: { error: emailErrors },
@@ -67,7 +67,7 @@ export const SigninForm: React.FC<SigninFormProps> = React.memo(
               color: 'primary.main',
               mb: 6,
             }}>
-            Signin
+            SignIn
           </Typography>
           <Card
             variant="outlined"
@@ -82,7 +82,7 @@ export const SigninForm: React.FC<SigninFormProps> = React.memo(
                 md: 6,
               },
             }}>
-            <form onSubmit={handleSubmit(signin)}>
+            <form onSubmit={handleSubmit(signIn)}>
               <Stack
                 spacing={{
                   xs: 4,
@@ -121,7 +121,7 @@ export const SigninForm: React.FC<SigninFormProps> = React.memo(
             </form>
           </Card>
           <Link
-            href="/signup"
+            href="/signUp"
             variant="body2"
             sx={{
               display: 'table',
@@ -136,4 +136,4 @@ export const SigninForm: React.FC<SigninFormProps> = React.memo(
   }
 );
 
-SigninForm.displayName = 'SigninForm';
+SignInForm.displayName = 'SignInForm';

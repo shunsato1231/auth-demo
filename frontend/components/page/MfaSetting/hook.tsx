@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DeviceDescProps } from './DeviceDesc';
 import { QrCodeScanProps } from './QrCodeScan';
 import { VerifyProps } from './Verify';
@@ -6,7 +6,7 @@ import { CompletedProps } from './Completed';
 
 import { useForm } from 'react-hook-form';
 import { useAuthContext } from '~/hooks/Auth/Auth.context';
-export interface useSigninType {
+export interface useSignInType {
   activeStep: number;
   DeviceDescProps: DeviceDescProps;
   QrCodeScanProps: QrCodeScanProps;
@@ -18,12 +18,15 @@ export const useMfaSettingPage = ({
   stepLength,
 }: {
   stepLength: number;
-}): useSigninType => {
+}): useSignInType => {
   const auth = useAuthContext();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [qrCode, setQrCode] = useState<string>('');
   const [mfaSettingCode, setMfaSettingCode] = useState<string>('');
 
+  /**
+   * load QR code
+   */
   useEffect(() => {
     if (activeStep === 1 && !qrCode) {
       auth.getMfaQr().then((res) => {
@@ -32,47 +35,39 @@ export const useMfaSettingPage = ({
     }
   }, [activeStep, auth, qrCode]);
 
-  const toForwardStep = () => {
+  /**
+   * steps
+   */
+  const toForwardStep = useCallback(() => {
     if (stepLength > activeStep) {
       setActiveStep((prev) => prev + 1);
     }
-  };
+  }, [activeStep, stepLength]);
 
-  const toBackwardStep = () => {
+  const toBackwardStep = useCallback(() => {
     if (activeStep > 0) {
       setActiveStep((prev) => prev - 1);
     }
-  };
+  }, [activeStep]);
 
-  const toggleMfaSettingCode = async (
-    _: React.SyntheticEvent,
-    isExpanded: boolean
-  ) => {
-    if (isExpanded) {
-      // TODO: get from api
-      const key = await auth.getMfaSettingCode();
-      setMfaSettingCode(key);
-    } else {
-      setMfaSettingCode('');
-    }
-  };
+  /**
+   * get MfaString code
+   */
+  const toggleMfaSettingCode = useCallback(
+    async (_: React.SyntheticEvent, isExpanded: boolean) => {
+      if (isExpanded) {
+        const key = await auth.getMfaSettingCode();
+        setMfaSettingCode(key);
+      } else {
+        setMfaSettingCode('');
+      }
+    },
+    [auth]
+  );
 
-  const verify = async ({ code1, code2 }: { code1: string; code2: string }) => {
-    try {
-      await auth.enabledMfa(code1, code2);
-      toForwardStep();
-    } catch (err) {
-      useVerifyForm.setError('code1', {
-        type: 'manual',
-        message: 'ワンタイムパスワードが間違えています',
-      });
-      useVerifyForm.setError('code2', {
-        type: 'manual',
-        message: 'ワンタイムパスワードが間違えています',
-      });
-    }
-  };
-
+  /**
+   * verify form
+   */
   const useVerifyForm = useForm({ mode: 'onTouched' });
   const code1ControllerProps = {
     name: 'code1',
@@ -94,6 +89,25 @@ export const useMfaSettingPage = ({
         value.length === 6 || 'ワンタイムパスワードは6桁で入力してください。',
     },
   };
+
+  const verify = useCallback(
+    async ({ code1, code2 }: { code1: string; code2: string }) => {
+      try {
+        await auth.enabledMfa(code1, code2);
+        toForwardStep();
+      } catch (err) {
+        useVerifyForm.setError('code1', {
+          type: 'manual',
+          message: 'ワンタイムパスワードが間違えています',
+        });
+        useVerifyForm.setError('code2', {
+          type: 'manual',
+          message: 'ワンタイムパスワードが間違えています',
+        });
+      }
+    },
+    [auth, toForwardStep, useVerifyForm]
+  );
 
   const signOut = auth.signOut;
 

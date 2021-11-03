@@ -9,8 +9,8 @@ import { AuthProvider } from '~/hooks/Auth/Auth.context';
 import { theme } from '~/theme/default';
 import { CssBaseline } from '@mui/material';
 
-import { Signin } from '~/components/page/Signin';
-import { Signup } from '~/components/page/Signup';
+import { SignIn } from '~/components/page/SignIn';
+import { SignUp } from '~/components/page/SignUp';
 import { Home } from '~/components/page/Home';
 import { MfaSetting } from '~/components/page/MfaSetting';
 
@@ -21,14 +21,14 @@ const App: React.FC = () => {
         <CssBaseline />
         <Router>
           <Switch>
-            <GuestRoute path="/signin" component={Signin} toRedirect="/" />
-            <GuestRoute path="/signup" component={Signup} toRedirect="/" />
+            <GuestRoute path="/signIn" component={SignIn} toRedirect="/" />
+            <GuestRoute path="/signUp" component={SignUp} toRedirect="/" />
             <MfaSettingRoute
               path="/mfa-setting"
               component={MfaSetting}
               toRedirect="/"
             />
-            <PrivateRoute path="/" component={Home} toRedirect="/signin" />
+            <PrivateRoute path="/" component={Home} toRedirect="/signIn" />
           </Switch>
         </Router>
       </ThemeProvider>

@@ -2,26 +2,35 @@ import { useCallback, useMemo } from 'react';
 import { useForm, UseControllerProps } from 'react-hook-form';
 import { useAuthContext } from '~/hooks/Auth/Auth.context';
 import { regex } from '~/utils/regex';
-import { SigninFormProps } from './SigninForm';
+import { SignInFormProps } from './SignInForm';
 import { VerifyMfaFormProps } from './VerifyMfaForm';
 
-export interface useSigninType {
+export interface useSignInType {
   step: number;
-  SigninFormProps: SigninFormProps;
+  SignInFormProps: SignInFormProps;
   VerifyMfaFormProps: VerifyMfaFormProps;
 }
 
-export const useSigninPage = (): useSigninType => {
+export const useSignInPage = (): useSignInType => {
+  /**
+   * useAuth
+   */
   const auth = useAuthContext();
 
+  /**
+   * slider steps
+   */
   const step = useMemo(() => {
     return auth.flag.tokenVerified ? 2 : 1;
   }, [auth]);
 
-  const useSigninForm = useForm({ mode: 'onTouched' });
+  /**
+   * signInForm
+   */
+  const useSignInForm = useForm({ mode: 'onTouched' });
   const emailControllerProps: UseControllerProps = {
     name: 'email',
-    control: useSigninForm.control,
+    control: useSignInForm.control,
     defaultValue: '',
     rules: {
       required: 'メールアドレスを入力してください。',
@@ -33,7 +42,7 @@ export const useSigninPage = (): useSigninType => {
   };
   const passwordControllerProps: UseControllerProps = {
     name: 'password',
-    control: useSigninForm.control,
+    control: useSignInForm.control,
     defaultValue: '',
     rules: {
       required: 'パスワードを入力してください。',
@@ -43,13 +52,13 @@ export const useSigninPage = (): useSigninType => {
       },
     },
   };
-  const signin = useCallback(
+  const signIn = useCallback(
     ({ email, password }: { email: string; password: string }) => {
       auth.signIn(email, password).catch((res) => {
         res.errors.map(
           (error: { field: string; message: string; code: string }) => {
             if (error.field) {
-              useSigninForm.setError(error.field, {
+              useSignInForm.setError(error.field, {
                 type: 'manual',
                 message: error.message,
               });
@@ -60,9 +69,12 @@ export const useSigninPage = (): useSigninType => {
         );
       });
     },
-    [auth, useSigninForm]
+    [auth, useSignInForm]
   );
 
+  /**
+   * verifyMfa form
+   */
   const useVerifyMfaForm = useForm({ mode: 'onTouched' });
   const codeControllerProps = {
     name: 'code',
@@ -95,24 +107,24 @@ export const useSigninPage = (): useSigninType => {
   );
   const cancelVerifyMfa = useCallback(async () => {
     auth.signOut().then(async () => {
-      useSigninForm.reset({ password: '', email: '' });
+      useSignInForm.reset({ password: '', email: '' });
       useVerifyMfaForm.reset({ code: '' });
     });
-  }, [auth, useSigninForm, useVerifyMfaForm]);
+  }, [auth, useSignInForm, useVerifyMfaForm]);
 
   return {
     step,
-    SigninFormProps: {
-      signin,
+    SignInFormProps: {
+      useSignInForm,
       emailControllerProps,
       passwordControllerProps,
-      useSigninForm,
+      signIn,
     },
     VerifyMfaFormProps: {
+      useVerifyMfaForm,
+      codeControllerProps,
       verifyMfa,
       cancelVerifyMfa,
-      codeControllerProps,
-      useVerifyMfaForm,
     },
   };
 };
