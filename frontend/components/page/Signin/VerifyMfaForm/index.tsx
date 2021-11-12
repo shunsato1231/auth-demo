@@ -40,7 +40,7 @@ export const VerifyMfaForm: React.FC<VerifyMfaFormProps> = React.memo(
           justifyContent: 'center',
           alignItems: 'center',
           px: {
-            xs: 0,
+            xs: 4,
           },
         }}>
         <Box

@@ -1,6 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useForm, UseControllerProps } from 'react-hook-form';
-import { useAuthContext } from '~/hooks/Auth/Auth.context';
+import { useDispatch, useSelector } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { Dispatch } from '~/store';
+import {
+  authSelector,
+  signIn as storeSignIn,
+  signOut as storeSignOut,
+  verifyMfa as storeVerifyMfa,
+} from '~/store/auth';
 import { regex } from '~/utils/regex';
 import { SignInFormProps } from './SignInForm';
 import { VerifyMfaFormProps } from './VerifyMfaForm';
@@ -13,15 +21,16 @@ export interface useSignInType {
 
 export const useSignInPage = (): useSignInType => {
   /**
-   * useAuth
+   * store
    */
-  const auth = useAuthContext();
+  const auth = useSelector(authSelector);
+  const dispatch = useDispatch<Dispatch>();
 
   /**
    * slider steps
    */
   const step = useMemo(() => {
-    return auth.flag.tokenVerified ? 2 : 1;
+    return auth.tokenVerified ? 2 : 1;
   }, [auth]);
 
   /**
@@ -54,22 +63,26 @@ export const useSignInPage = (): useSignInType => {
   };
   const signIn = useCallback(
     ({ email, password }: { email: string; password: string }) => {
-      auth.signIn(email, password).catch((res) => {
-        res.errors.map(
-          (error: { field: string; message: string; code: string }) => {
-            if (error.field) {
-              useSignInForm.setError(error.field, {
-                type: 'manual',
-                message: error.message,
-              });
-            } else {
-              alert(error.message);
-            }
+      dispatch(storeSignIn({ email, password }))
+        .then(unwrapResult)
+        .catch((err) => {
+          if (err.errors) {
+            err.errors.map(
+              (error: { field: string; message: string; code: string }) => {
+                if (error.field) {
+                  useSignInForm.setError(error.field, {
+                    type: 'manual',
+                    message: error.message,
+                  });
+                } else {
+                  alert(error.message);
+                }
+              }
+            );
           }
-        );
-      });
+        });
     },
-    [auth, useSignInForm]
+    [dispatch, useSignInForm]
   );
 
   /**
@@ -86,31 +99,38 @@ export const useSignInPage = (): useSignInType => {
         value.length === 6 || 'ワンタイムパスワードは6桁で入力してください。',
     },
   };
+
   const verifyMfa = useCallback(
     ({ code }: { code: string }) => {
-      auth.verifiedMfa(code).catch((res) => {
-        res.errors.map(
-          (error: { field: string; message: string; code: string }) => {
-            if (error.field) {
-              useVerifyMfaForm.setError(error.field, {
-                type: 'manual',
-                message: error.message,
-              });
-            } else {
-              alert(error.message);
-            }
+      dispatch(storeVerifyMfa(code))
+        .then(unwrapResult)
+        .catch((err) => {
+          if (err.errors) {
+            err.errors.map(
+              (error: { field: string; message: string; code: string }) => {
+                if (error.field) {
+                  useVerifyMfaForm.setError(error.field, {
+                    type: 'manual',
+                    message: error.message,
+                  });
+                } else {
+                  alert(error.message);
+                }
+              }
+            );
           }
-        );
-      });
+        });
     },
-    [auth, useVerifyMfaForm]
+    [dispatch, useVerifyMfaForm]
   );
   const cancelVerifyMfa = useCallback(async () => {
-    auth.signOut().then(async () => {
-      useSignInForm.reset({ password: '', email: '' });
-      useVerifyMfaForm.reset({ code: '' });
-    });
-  }, [auth, useSignInForm, useVerifyMfaForm]);
+    dispatch(storeSignOut())
+      .then(unwrapResult)
+      .then(() => {
+        useSignInForm.reset({ password: '', email: '' });
+        useVerifyMfaForm.reset({ code: '' });
+      });
+  }, [dispatch, useSignInForm, useVerifyMfaForm]);
 
   return {
     step,

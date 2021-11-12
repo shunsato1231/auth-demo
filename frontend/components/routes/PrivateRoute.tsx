@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Redirect, RouteProps } from 'react-router-dom';
-import { useAuthContext } from '~/hooks/Auth/Auth.context';
-
+import { useSelector } from 'react-redux';
+import { authSelector } from '~/store/auth';
 interface PrivateRouteProps extends RouteProps {
   path: string;
   component: React.FC;
@@ -13,12 +13,12 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({
   component,
   toRedirect,
 }): JSX.Element => {
-  const auth = useAuthContext();
+  const auth = useSelector(authSelector);
   const isRedirect = () => {
-    if (auth.flag.mfaEnabled) {
-      return !auth.flag.mfaVerified;
+    if (auth.mfaEnabled) {
+      return !auth.mfaVerified;
     } else {
-      return !auth.flag.tokenVerified;
+      return !auth.tokenVerified;
     }
   };
   return isRedirect() ? (

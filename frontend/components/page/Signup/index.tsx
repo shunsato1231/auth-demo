@@ -9,6 +9,7 @@ import {
   Button,
   TextField,
   Container,
+  Link,
 } from '@mui/material';
 import { ToggleTextField } from '~/components/ui/ToggleTextField';
 
@@ -118,11 +119,21 @@ export const SignUp: React.FC = () => {
                 sx={{
                   mt: 5,
                 }}>
-                Login
+                SignUp
               </Button>
             </Stack>
           </form>
         </Card>
+        <Link
+          href="/signIn"
+          variant="body2"
+          sx={{
+            display: 'table',
+            mt: 4,
+            ml: 'auto',
+          }}>
+          サインイン画面に戻る
+        </Link>
       </Box>
     </Container>
   );

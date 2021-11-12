@@ -14,15 +14,16 @@ const secretKey = process.env.AUTH_SECRET || 'secretKey';
 export const signup = async (req: Request, res: Response): Promise<void> => {
   if (!req.body.email && !req.body.password) {
     res.status(401).json({
+      resource: 'signup',
+      code: 'invalid_parameter',
+      message: '登録に失敗しました',
       errors: [
         {
-          resource: 'signup',
           field: 'email',
           code: 'missing_field',
           message: 'メールアドレスが入力されていません。',
         },
         {
-          resource: 'signup',
           field: 'password',
           code: 'missing_field',
           message: 'パスワードが入力されていません。',
@@ -32,9 +33,11 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     return;
   } else if (!req.body.email) {
     res.status(401).json({
+      resource: 'signup',
+      code: 'invalid_parameter',
+      message: '登録に失敗しました',
       errors: [
         {
-          resource: 'signup',
           field: 'email',
           code: 'missing_field',
           message: 'メールアドレスが入力されていません。',
@@ -44,9 +47,11 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     return;
   } else if (!req.body.password) {
     res.status(401).json({
+      resource: 'signup',
+      code: 'invalid_parameter',
+      message: '登録に失敗しました',
       errors: [
         {
-          resource: 'signup',
           field: 'email',
           code: 'missing_field',
           message: 'パスワードが入力されていません。',
@@ -82,14 +87,9 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'signup',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しました。',
-        },
-      ],
+      resource: 'signup',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました',
     });
   }
 };
@@ -97,15 +97,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 export const signin = async (req: Request, res: Response): Promise<void> => {
   if (!req.body.email && !req.body.password) {
     res.status(401).json({
+      resource: 'signin',
+      code: 'invalid_parameter',
+      message: 'ログインに失敗しました',
       errors: [
         {
-          resource: 'signin',
           field: 'email',
           code: 'missing_field',
           message: 'メールアドレスが入力されていません。',
         },
         {
-          resource: 'signin',
           field: 'password',
           code: 'missing_field',
           message: 'パスワードが入力されていません。',
@@ -115,9 +116,11 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
     return;
   } else if (!req.body.email) {
     res.status(401).json({
+      resource: 'signin',
+      code: 'invalid_parameter',
+      message: 'ログインに失敗しました',
       errors: [
         {
-          resource: 'signin',
           field: 'email',
           code: 'missing_field',
           message: 'メールアドレスが入力されていません。',
@@ -127,9 +130,11 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
     return;
   } else if (!req.body.password) {
     res.status(401).json({
+      resource: 'signin',
+      message: 'ログインに失敗しました',
+      code: 'invalid_parameter',
       errors: [
         {
-          resource: 'signin',
           field: 'email',
           code: 'missing_field',
           message: 'パスワードが入力されていません。',
@@ -146,9 +151,11 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
     if (!user) {
       res.status(404).json({
+        resource: 'signin',
+        code: 'user_not_found',
+        message: 'ログインに失敗しました',
         errors: [
           {
-            resource: 'signin',
             field: 'email',
             code: 'not_found',
             message: '登録されていないメールアドレスです。',
@@ -165,9 +172,11 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
     if (!passwordIsValid) {
       res.status(401).json({
+        resource: 'signin',
+        code: 'invalid_password',
+        message: 'ログインに失敗しました',
         errors: [
           {
-            resource: 'signin',
             field: 'password',
             code: 'invalid',
             message: 'パスワードが間違えています。',
@@ -195,14 +204,9 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'signin',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しいました。',
-        },
-      ],
+      resource: 'signin',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました。',
     });
   }
 };
@@ -229,14 +233,9 @@ export const verifyOneTimePassword = async (
     res.status(200).send(token);
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'verify_one_time_password',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しました。',
-        },
-      ],
+      resource: 'verify_one_time_password',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました。',
     });
   }
 };
@@ -250,14 +249,9 @@ export const enableMfa = async (req: Request, res: Response): Promise<void> => {
 
     if (!mfaSecretKey) {
       res.status(403).json({
-        errors: [
-          {
-            resource: 'verify_one_time_password',
-            field: '',
-            code: 'unexpected_error',
-            message: 'QRコードの登録が行われていません。',
-          },
-        ],
+        resource: 'verify_one_time_password',
+        code: 'invalid_mfa',
+        message: 'QRコードの登録が行われていません。',
       });
       return;
     }
@@ -280,14 +274,9 @@ export const enableMfa = async (req: Request, res: Response): Promise<void> => {
     res.status(200).send(token);
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'verify_one_time_password',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しました。',
-        },
-      ],
+      resource: 'verify_one_time_password',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました。',
     });
   }
 };
@@ -313,14 +302,9 @@ export const generateMfaQRCode = async (
         );
       } catch (err) {
         res.status(500).json({
-          errors: [
-            {
-              resource: 'generate_mfa_qr_code',
-              field: '',
-              code: 'unexpected_error',
-              message: '想定外のエラーが発生しました。',
-            },
-          ],
+          resource: 'generate_mfa_qr_code',
+          code: 'unexpected_error',
+          message: '想定外のエラーが発生しました。',
         });
       }
     }
@@ -338,14 +322,9 @@ export const generateMfaQRCode = async (
     await qrcode.toFileStream(res, configUri);
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'generate_mfa_qr_code',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しました。',
-        },
-      ],
+      resource: 'generate_mfa_qr_code',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました。',
     });
   }
 };
@@ -371,14 +350,9 @@ export const generateMfaSettingCode = async (
         );
       } catch (err) {
         res.status(500).json({
-          errors: [
-            {
-              resource: 'generate_mfa_qr_code',
-              field: '',
-              code: 'unexpected_error',
-              message: '想定外のエラーが発生しました。',
-            },
-          ],
+          resource: 'generate_mfa_qr_code',
+          code: 'unexpected_error',
+          message: '想定外のエラーが発生しました。',
         });
       }
     }
@@ -386,14 +360,9 @@ export const generateMfaSettingCode = async (
     res.status(200).json(mfaSecretKey);
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'generate_mfa_qr_code',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しました。',
-        },
-      ],
+      resource: 'generate_mfa_qr_code',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました。',
     });
   }
 };

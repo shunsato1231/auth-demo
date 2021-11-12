@@ -37,15 +37,9 @@ const verifyToken = async (
       if (id) {
         const user = await User.findById(id).catch(() => {
           res.status(401).json({
-            errors: [
-              {
-                resource: 'verify_token',
-                field: '',
-                code: 'invalid_token',
-                message:
-                  'トークンが正しくありません。ログインし直してください。',
-              },
-            ],
+            resource: 'verify_token',
+            code: 'invalid_token',
+            message: 'トークンが正しくありません。ログインし直してください。',
           });
           return;
         });
@@ -57,54 +51,33 @@ const verifyToken = async (
           next();
         } else {
           res.status(401).json({
-            errors: [
-              {
-                resource: 'verify_token',
-                field: '',
-                code: 'invalid_token',
-                message:
-                  'トークンが正しくありません。ログインし直してください。',
-              },
-            ],
+            resource: 'verify_token',
+            code: 'invalid_token',
+            message: 'トークンが正しくありません。ログインし直してください。',
           });
           return;
         }
       } else {
         res.status(401).json({
-          errors: [
-            {
-              resource: 'verify_token',
-              field: '',
-              code: 'invalid_token',
-              message: 'トークンが正しくありません。ログインし直してください。',
-            },
-          ],
+          resource: 'verify_token',
+          code: 'invalid_token',
+          message: 'トークンが正しくありません。ログインし直してください。',
         });
         return;
       }
     } catch (err) {
       res.status(500).json({
-        errors: [
-          {
-            resource: 'verify_token',
-            field: '',
-            code: 'unexpected_error',
-            message: '想定外のエラーが発生しました。',
-          },
-        ],
+        resource: 'verify_token',
+        code: 'unexpected_error',
+        message: '想定外のエラーが発生しました。',
       });
       return;
     }
   } else {
     res.status(401).json({
-      errors: [
-        {
-          resource: 'verify_token',
-          field: '',
-          code: 'invalid_token',
-          message: 'トークンが正しくありません。ログインし直してください。',
-        },
-      ],
+      resource: 'verify_token',
+      code: 'invalid_token',
+      message: 'トークンが正しくありません。ログインし直してください。',
     });
   }
 };
@@ -151,9 +124,11 @@ export const verifyTOTP = async (
 
   if (!oneTimePassword) {
     res.status(401).json({
+      resource: 'verify_totp',
+      code: 'invalid_parameter',
+      message: '承認に失敗しました',
       errors: [
         {
-          resource: 'verify_totp',
           field: 'code',
           code: 'missing_field',
           message: 'ワンタイムパスワードが入力されていません。',
@@ -165,28 +140,18 @@ export const verifyTOTP = async (
 
   const { mfaSecretKey } = await User.findById(userId).catch(() => {
     res.status(400).json({
-      errors: [
-        {
-          resource: 'verify_totp',
-          field: '',
-          code: 'invalid_token',
-          message: 'トークンが正しくありません。ログインし直してください。',
-        },
-      ],
+      resource: 'verify_totp',
+      code: 'invalid_token',
+      message: 'トークンが正しくありません。ログインし直してください。',
     });
     return;
   });
 
   if (!mfaSecretKey) {
     res.status(403).json({
-      errors: [
-        {
-          resource: 'verify_totp',
-          field: '',
-          code: 'missing_secret_key',
-          message: '2段階認証が正しく設定されていません。',
-        },
-      ],
+      resource: 'verify_totp',
+      code: 'missing_secret_key',
+      message: '2段階認証が正しく設定されていません。',
     });
     return;
   }
@@ -201,9 +166,11 @@ export const verifyTOTP = async (
   }
 
   res.status(401).json({
+    resource: 'verify_totp',
+    code: 'invalid_mfa_auth',
+    message: '認証に失敗しました',
     errors: [
       {
-        resource: 'verify_totp',
         field: 'code',
         code: 'invalid_field',
         message: 'ワンタイムパスワードが正しくありません。',
@@ -224,9 +191,11 @@ export const verifyMultiTOTP = async (
 
   if (!oneTimePassword1 || !oneTimePassword2) {
     res.status(401).json({
+      resource: 'verify_totp',
+      code: 'invalid_parameter',
+      message: '認証に失敗しました',
       errors: [
         {
-          resource: 'verify_totp',
           field: 'code',
           code: 'missing_field',
           message: 'ワンタイムパスワードが入力されていません。',
@@ -238,28 +207,18 @@ export const verifyMultiTOTP = async (
 
   const { mfaSecretKey } = await User.findById(userId).catch(() => {
     res.status(400).json({
-      errors: [
-        {
-          resource: 'verify_totp',
-          field: '',
-          code: 'invalid_token',
-          message: 'トークンが正しくありません。ログインし直してください。',
-        },
-      ],
+      resource: 'verify_totp',
+      code: 'invalid_token',
+      message: 'トークンが正しくありません。ログインし直してください。',
     });
     return;
   });
 
   if (!mfaSecretKey) {
     res.status(403).json({
-      errors: [
-        {
-          resource: 'verify_totp',
-          field: '',
-          code: 'missing_secret_key',
-          message: '2段階認証が正しく設定されていません。',
-        },
-      ],
+      resource: 'verify_totp',
+      code: 'missing_secret_key',
+      message: '2段階認証が正しく設定されていません。',
     });
     return;
   }
@@ -284,9 +243,11 @@ export const verifyMultiTOTP = async (
   }
 
   res.status(401).json({
+    resource: 'verify_totp',
+    code: 'invalid_mfa_auth',
+    message: '認証に失敗しました',
     errors: [
       {
-        resource: 'verify_totp',
         field: 'code',
         code: 'invalid_field',
         message: 'ワンタイムパスワードが正しくありません。',
@@ -308,28 +269,18 @@ const isDisabledMfa = async (
 
     if (mfaEnabled) {
       res.status(403).json({
-        errors: [
-          {
-            resource: 'is_disabled_mfa',
-            field: '',
-            code: 'already_enabled',
-            message: '2段階認証は既に設定済みです。',
-          },
-        ],
+        resource: 'is_disabled_mfa',
+        code: 'already_enabled',
+        message: '2段階認証は既に設定済みです。',
       });
     } else {
       next();
     }
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'is_disabled_mfa',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しました。',
-        },
-      ],
+      resource: 'is_disabled_mfa',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました。',
     });
   }
 };
@@ -347,28 +298,18 @@ export const isMfaVerified = async (
       const { mfaEnabled } = await User.findOne({ _id: userId });
       if (!mfaEnabled) {
         res.status(403).json({
-          errors: [
-            {
-              resource: 'is_mfa_verified',
-              field: '',
-              code: 'not_enabled',
-              message: '2段階認証が設定されていません。',
-            },
-          ],
+          resource: 'is_mfa_verified',
+          code: 'not_enabled',
+          message: '2段階認証が設定されていません。',
         });
         return;
       }
 
       if (mfaEnabled && !mfaVerified) {
         res.status(403).json({
-          errors: [
-            {
-              resource: 'is_mfa_verified',
-              field: '',
-              code: 'not_authentication',
-              message: '2段階認証が承認されていません。',
-            },
-          ],
+          resource: 'is_mfa_verified',
+          code: 'not_authentication',
+          message: '2段階認証が承認されていません。',
         });
         return;
       }
@@ -376,27 +317,17 @@ export const isMfaVerified = async (
       next();
     } catch (err) {
       res.status(500).json({
-        errors: [
-          {
-            resource: 'is_mfa_verified',
-            field: '',
-            code: 'unexpected_error',
-            message: '想定外のエラーが発生しました。',
-          },
-        ],
+        resource: 'is_mfa_verified',
+        code: 'unexpected_error',
+        message: '想定外のエラーが発生しました。',
       });
       return;
     }
   } else {
     res.status(403).json({
-      errors: [
-        {
-          resource: 'is_mfa_verified',
-          field: '',
-          code: 'empty',
-          message: 'トークンがありません。ログインし直してください。',
-        },
-      ],
+      resource: 'is_mfa_verified',
+      code: 'empty',
+      message: 'トークンがありません。ログインし直してください。',
     });
     return;
   }

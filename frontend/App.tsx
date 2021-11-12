@@ -4,8 +4,9 @@ import { GuestRoute } from '~/components/routes/GuestRoute';
 import { PrivateRoute } from '~/components/routes/PrivateRoute';
 import { MfaSettingRoute } from '~/components/routes/MfaSettingRoute';
 
+import { Provider } from 'react-redux';
+import { store } from '~/store';
 import { ThemeProvider } from '@mui/material/styles';
-import { AuthProvider } from '~/hooks/Auth/Auth.context';
 import { theme } from '~/theme/default';
 import { CssBaseline } from '@mui/material';
 
@@ -16,7 +17,7 @@ import { MfaSetting } from '~/components/page/MfaSetting';
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
+    <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
@@ -32,7 +33,7 @@ const App: React.FC = () => {
           </Switch>
         </Router>
       </ThemeProvider>
-    </AuthProvider>
+    </Provider>
   );
 };
 

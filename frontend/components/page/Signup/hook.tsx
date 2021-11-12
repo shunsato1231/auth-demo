@@ -1,6 +1,9 @@
 import { useCallback } from 'react';
 import { useForm, UseFormReturn, UseControllerProps } from 'react-hook-form';
-import { useAuthContext } from '~/hooks/Auth/Auth.context';
+import { useDispatch } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { Dispatch } from '~/store';
+import { signUp as storeSignUp } from '~/store/auth';
 import { regex } from '~/utils/regex';
 
 export interface useSignInType {
@@ -13,9 +16,9 @@ export interface useSignInType {
 
 export const useSignUpPage = (): useSignInType => {
   /**
-   * auth context
+   * store
    */
-  const auth = useAuthContext();
+  const dispatch = useDispatch<Dispatch>();
 
   /**
    * signUp form
@@ -58,22 +61,26 @@ export const useSignUpPage = (): useSignInType => {
   };
   const signUp = useCallback(
     ({ email, password }: { email: string; password: string }) => {
-      auth.signUp(email, password).catch((res) => {
-        res.errors.map(
-          (error: { field: string; message: string; code: string }) => {
-            if (error.field) {
-              useSignUpForm.setError(error.field, {
-                type: 'manual',
-                message: error.message,
-              });
-            } else {
-              alert(error.message);
-            }
+      dispatch(storeSignUp({ email, password }))
+        .then(unwrapResult)
+        .catch((err) => {
+          if (err?.errors) {
+            err.errors.map(
+              (error: { field: string; message: string; code: string }) => {
+                if (error.field) {
+                  useSignUpForm.setError(error.field, {
+                    type: 'manual',
+                    message: error.message,
+                  });
+                } else {
+                  alert(error.message);
+                }
+              }
+            );
           }
-        );
-      });
+        });
     },
-    [auth, useSignUpForm]
+    [dispatch, useSignUpForm]
   );
 
   return {

@@ -1,11 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { Dispatch } from '~/store';
+import {
+  getMfaQr,
+  getMfaSettingCode,
+  enabledMfa,
+  signOut as storeSignOut,
+} from '~/store/auth';
+
 import { DeviceDescProps } from './DeviceDesc';
 import { QrCodeScanProps } from './QrCodeScan';
 import { VerifyProps } from './Verify';
 import { CompletedProps } from './Completed';
 
 import { useForm } from 'react-hook-form';
-import { useAuthContext } from '~/hooks/Auth/Auth.context';
 export interface useSignInType {
   activeStep: number;
   DeviceDescProps: DeviceDescProps;
@@ -19,7 +28,11 @@ export const useMfaSettingPage = ({
 }: {
   stepLength: number;
 }): useSignInType => {
-  const auth = useAuthContext();
+  /**
+   * store
+   */
+  const dispatch = useDispatch<Dispatch>();
+
   const [activeStep, setActiveStep] = useState<number>(0);
   const [qrCode, setQrCode] = useState<string>('');
   const [mfaSettingCode, setMfaSettingCode] = useState<string>('');
@@ -29,11 +42,13 @@ export const useMfaSettingPage = ({
    */
   useEffect(() => {
     if (activeStep === 1 && !qrCode) {
-      auth.getMfaQr().then((res) => {
-        setQrCode(res);
-      });
+      dispatch(getMfaQr())
+        .then(unwrapResult)
+        .then((res) => {
+          setQrCode(res);
+        });
     }
-  }, [activeStep, auth, qrCode]);
+  }, [activeStep, dispatch, qrCode]);
 
   /**
    * steps
@@ -56,13 +71,16 @@ export const useMfaSettingPage = ({
   const toggleMfaSettingCode = useCallback(
     async (_: React.SyntheticEvent, isExpanded: boolean) => {
       if (isExpanded) {
-        const key = await auth.getMfaSettingCode();
-        setMfaSettingCode(key);
+        dispatch(getMfaSettingCode())
+          .then(unwrapResult)
+          .then((key) => {
+            setMfaSettingCode(key);
+          });
       } else {
         setMfaSettingCode('');
       }
     },
-    [auth]
+    [dispatch]
   );
 
   /**
@@ -92,24 +110,30 @@ export const useMfaSettingPage = ({
 
   const verify = useCallback(
     async ({ code1, code2 }: { code1: string; code2: string }) => {
-      try {
-        await auth.enabledMfa(code1, code2);
-        toForwardStep();
-      } catch (err) {
-        useVerifyForm.setError('code1', {
-          type: 'manual',
-          message: 'ワンタイムパスワードが間違えています',
+      dispatch(enabledMfa({ code1, code2 }))
+        .then(unwrapResult)
+        .then(() => {
+          toForwardStep();
+        })
+        .catch((err) => {
+          if (err?.errors) {
+            useVerifyForm.setError('code1', {
+              type: 'manual',
+              message: 'ワンタイムパスワードが正しくありません。',
+            });
+            useVerifyForm.setError('code2', {
+              type: 'manual',
+              message: 'ワンタイムパスワードが正しくありません。',
+            });
+          }
         });
-        useVerifyForm.setError('code2', {
-          type: 'manual',
-          message: 'ワンタイムパスワードが間違えています',
-        });
-      }
     },
-    [auth, toForwardStep, useVerifyForm]
+    [dispatch, toForwardStep, useVerifyForm]
   );
 
-  const signOut = auth.signOut;
+  const signOut = useCallback(async () => {
+    dispatch(storeSignOut());
+  }, [dispatch]);
 
   return {
     activeStep,

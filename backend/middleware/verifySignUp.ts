@@ -15,9 +15,11 @@ const checkDuplicateEmail = async (
 
     if (user) {
       res.status(409).json({
+        resource: 'check_duplicate_email',
+        code: 'invalid_signup',
+        message: '新規登録に失敗しました',
         errors: [
           {
-            resource: 'check_duplicate_email',
             field: 'email',
             code: 'duplicate_email',
             message: 'このメールアドレスは既に使用されています。',
@@ -29,14 +31,9 @@ const checkDuplicateEmail = async (
     }
   } catch (err) {
     res.status(500).json({
-      errors: [
-        {
-          resource: 'check_duplicate_email',
-          field: '',
-          code: 'unexpected_error',
-          message: '想定外のエラーが発生しました。',
-        },
-      ],
+      resource: 'check_duplicate_email',
+      code: 'unexpected_error',
+      message: '想定外のエラーが発生しました。',
     });
   }
 };
