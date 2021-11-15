@@ -1,13 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IUser extends Document {
+export interface User extends Document {
   email: string;
   password: string;
   mfaEnabled: boolean;
   mfaSecretKey: string;
 }
 
-const UserSchema: Schema<IUser> = new Schema({
+const UserSchema: Schema<User> = new Schema({
   email: {
     type: String,
     unique: true,

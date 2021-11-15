@@ -10,6 +10,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '~/theme/default';
 import { CssBaseline } from '@mui/material';
 
+import { DefaultLayout } from '~/components/layouts/default';
 import { SignIn } from '~/components/page/SignIn';
 import { SignUp } from '~/components/page/SignUp';
 import { Home } from '~/components/page/Home';
@@ -20,18 +21,20 @@ const App: React.FC = () => {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
-          <Switch>
-            <GuestRoute path="/signIn" component={SignIn} toRedirect="/" />
-            <GuestRoute path="/signUp" component={SignUp} toRedirect="/" />
-            <MfaSettingRoute
-              path="/mfa-setting"
-              component={MfaSetting}
-              toRedirect="/"
-            />
-            <PrivateRoute path="/" component={Home} toRedirect="/signIn" />
-          </Switch>
-        </Router>
+        <DefaultLayout>
+          <Router>
+            <Switch>
+              <GuestRoute path="/signIn" component={SignIn} toRedirect="/" />
+              <GuestRoute path="/signUp" component={SignUp} toRedirect="/" />
+              <MfaSettingRoute
+                path="/mfa-setting"
+                component={MfaSetting}
+                toRedirect="/"
+              />
+              <PrivateRoute path="/" component={Home} toRedirect="/signIn" />
+            </Switch>
+          </Router>
+        </DefaultLayout>
       </ThemeProvider>
     </Provider>
   );

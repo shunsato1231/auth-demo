@@ -9,20 +9,20 @@ interface IHeaders {
   'Content-Type'?: string;
 }
 
-export interface IError {
+export interface Error {
   field: string;
   code: string;
   message: string;
 }
 
-export interface IErrorResponse {
+export interface ErrorResponse {
   resource: string;
   code: string;
   message: string;
-  errors?: [IError];
+  errors?: [Error];
 }
 
-export interface IUser {
+export interface User {
   email: string;
   mfaEnabled: boolean;
   token: string;
@@ -65,7 +65,7 @@ const getHeaders = async (
 
 const handleError = (err: unknown) => {
   if (axios.isAxiosError(err)) {
-    throw (err as AxiosError<IErrorResponse>).response?.data;
+    throw (err as AxiosError<ErrorResponse>).response?.data;
   } else {
     throw err;
   }
@@ -107,9 +107,9 @@ const post = async <T extends unknown>(
 };
 
 export default {
-  signUp: async (email: string, password: string): Promise<IUser> => {
+  signUp: async (email: string, password: string): Promise<User> => {
     try {
-      const res = await post<IUser>('/api/auth/signUp', { email, password });
+      const res = await post<User>('/api/auth/signUp', { email, password });
       const user = res.data;
       setToken(user.token);
       return user;
@@ -117,9 +117,9 @@ export default {
       return handleError(err);
     }
   },
-  signIn: async (email: string, password: string): Promise<IUser> => {
+  signIn: async (email: string, password: string): Promise<User> => {
     try {
-      const res = await post<IUser>('/api/auth/signIn', { email, password });
+      const res = await post<User>('/api/auth/signIn', { email, password });
       const user = res.data;
       setToken(user.token);
       return user;
