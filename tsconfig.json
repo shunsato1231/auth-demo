@@ -17,7 +17,12 @@
     "pretty": true,
     "baseUrl": "./",
     "paths": {
-      "~/*": ["frontend/*"]
+      "~/*": ["frontend/*"],
+      "@infrastructure/*": ["backend/infrastructure/*"],
+      "@adapters": ["backend/adapters/index"],
+      "@entities": ["backend/entities/index"],
+      "@useCases": ["backend/useCases/index"],
+      "@utils": ["backend/utils/index"]
     }
   },
   "ts-node": {

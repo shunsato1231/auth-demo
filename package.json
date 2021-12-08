@@ -8,6 +8,7 @@
     "watch": "webpack --watch",
     "test": "jest",
     "server": "nodemon _backend/server.ts",
+    "server2": "nodemon --config nodemon.json",
     "eslint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
     "prettier:fix": "prettier --write ."
   },
@@ -58,6 +59,7 @@
     "ts-jest": "^27.0.5",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.2.1",
+    "tsconfig-paths": "^3.12.0",
     "typescript": "^4.4.3",
     "webpack": "^5.54.0",
     "webpack-cli": "^4.0.0",

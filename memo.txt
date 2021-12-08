@@ -27,3 +27,6 @@ https://github.com/dcaponi/clean-architecture-implementation
 
 ステータスコード
 https://www.itmanage.co.jp/column/http-www-request-response-statuscode/#anc004
+
+https://github.com/FilipeMata/clean_architecture_typescript_example
+https://github.com/vishudamo/node-clean-architecture/tree/20dbe5d7903bffe3895e77ebd71fa876f23c1db9
