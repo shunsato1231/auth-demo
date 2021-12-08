@@ -39,14 +39,12 @@ export class User extends Entity<IUser> {
   private constructor(props: IUser, id?: UniqueEntityID) {
     const hashedValueGenerator =
       HashedValueGeneratorFactory.getInstance().getHashedValueGenerator();
-    super(
-      {
-        ...props,
-        password: hashedValueGenerator.toHash(props.password),
-      },
-      id
-    );
 
+    if (!id) {
+      props.password = hashedValueGenerator.toHash(props.password);
+    }
+
+    super(props, id);
     this._hashedValueGenerator = hashedValueGenerator;
   }
 
