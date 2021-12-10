@@ -96,8 +96,8 @@ export class UnitOfWork implements IUnitOfWork {
     }
 
     if (
-      !this._isOneOf(obj, this._dirtyObjects) &&
-      !this._isOneOf(obj, this._newObjects)
+      this._isOneOf(obj, this._dirtyObjects) &&
+      this._isOneOf(obj, this._newObjects)
     ) {
       this._dirtyObjects.push(obj);
     }

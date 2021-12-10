@@ -2,7 +2,7 @@ import { Token } from '../../adapters/gateways/Token';
 import jwt from 'jsonwebtoken';
 
 export class JsonWebToken implements Token {
-  public sign(payload: unknown, secretKey: string, expiresIn: string): string {
+  public sign(payload: unknown, secretKey: string, expiresIn: number): string {
     return jwt.sign(payload as { [key: string]: unknown }, secretKey, {
       expiresIn,
     });

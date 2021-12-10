@@ -24,7 +24,7 @@ interface IRepository {
   removeCollection(entities: Entity<unknown>[]): Promise<void>;
   endTransaction(): Promise<void>;
   createToken(payload: unknown): string;
-  verifyToken<
+  decodeToken<
     T extends {
       [key: string]: unknown;
     }
@@ -99,7 +99,7 @@ export class BaseRepository implements IRepository {
     if (!entity) {
       entity = await this._dataMappers
         .getEntityMapper(entityName)
-        .find({ id: id.toValue() });
+        .find({ _id: id.toValue() });
     }
 
     if (!entity) {
@@ -155,14 +155,10 @@ export class BaseRepository implements IRepository {
   }
 
   public createToken(payload: unknown): string {
-    return this._token.sign(payload, this._tokenSecretKey, '2400');
+    return this._token.sign(payload, this._tokenSecretKey, 86400);
   }
 
-  public verifyToken<
-    T extends {
-      [key: string]: unknown;
-    }
-  >(token: string): T {
+  public decodeToken<T>(token: string): T {
     return this._token.verify(token, this._tokenSecretKey) as T;
   }
 }
