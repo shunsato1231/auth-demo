@@ -53,46 +53,46 @@ export class GetMfaSettingCodeInteractor {
     let mfaSecretKey;
     if (!user.mfaSecretKey) {
       mfaSecretKey = await this._gateway.generateSecreyKey();
+      const updatedUserResult = User.build(
+        {
+          email: user.email,
+          password: user.password,
+          mfaEnabled: false,
+          mfaSecretKey,
+        },
+        user.id
+      );
+
+      if (!updatedUserResult.succeeded) {
+        return this._presenter.show({
+          statusCode: updatedUserResult.statusCode,
+          failured: updatedUserResult.errors,
+        });
+      }
+
+      const updatedUser = updatedUserResult.value;
+
+      try {
+        this._gateway.startTransaction();
+        await this._gateway.save(updatedUser);
+        await this._gateway.endTransaction();
+      } catch {
+        return this._presenter.show({
+          statusCode: 500,
+          failured: {
+            resource: 'get_mfa_setting_code',
+            code: 'unexpected_failure',
+            message: 'ユーザ情報の更新に失敗しました',
+          },
+        });
+      }
     } else {
       mfaSecretKey = user.mfaSecretKey;
     }
 
-    const updatedUserResult = User.build(
-      {
-        email: user.email,
-        password: user.password,
-        mfaEnabled: false,
-        mfaSecretKey,
-      },
-      user.id
-    );
-
-    if (!updatedUserResult.succeeded) {
-      return this._presenter.show({
-        statusCode: updatedUserResult.statusCode,
-        failured: updatedUserResult.errors,
-      });
-    }
-
-    const updatedUser = updatedUserResult.value;
-
-    try {
-      this._gateway.startTransaction();
-      await this._gateway.save(updatedUser);
-      await this._gateway.endTransaction();
-      return this._presenter.show({
-        statusCode: 200,
-        success: updatedUser.mfaSecretKey,
-      });
-    } catch {
-      return this._presenter.show({
-        statusCode: 500,
-        failured: {
-          resource: 'get_mfa_setting_code',
-          code: 'unexpected_failure',
-          message: '取得に失敗しました',
-        },
-      });
-    }
+    return this._presenter.show({
+      statusCode: 200,
+      success: mfaSecretKey,
+    });
   }
 }
