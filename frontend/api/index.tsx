@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { Buffer } from 'buffer';
 
 const ACCCESS_TOKEN_KEY = 'access_token';
 interface IHeaders {
@@ -142,17 +141,10 @@ export default {
   },
   getMfaQr: async (): Promise<string> => {
     try {
-      const res = await get<string>(
-        '/api/auth/mfa_qr_code',
-        undefined,
-        undefined,
-        undefined,
-        'arraybuffer'
-      );
-      const base64 = Buffer.from(res.data, 'binary').toString('base64');
-      const prefix = `data:${res.headers['content-type']};base64,`;
+      const res = await get<string>('/api/auth/mfa_qr_code');
+      const qrCode = res.data;
 
-      return prefix + base64;
+      return qrCode;
     } catch (err) {
       return handleError(err);
     }
@@ -166,9 +158,9 @@ export default {
       return handleError(err);
     }
   },
-  enabledMfa: async (code1: string, code2: string): Promise<string> => {
+  enableMfa: async (code1: string, code2: string): Promise<string> => {
     try {
-      const res = await post<string>('/api/auth/enabled_mfa', { code1, code2 });
+      const res = await post<string>('/api/auth/enable_mfa', { code1, code2 });
       setToken(res.data);
       return res.data;
     } catch (err) {

@@ -79,13 +79,13 @@ export const getMfaSettingCode = createAsyncThunk<
   }
 });
 
-export const enabledMfa = createAsyncThunk<
+export const enableMfa = createAsyncThunk<
   undefined,
   { code1: string; code2: string },
   { rejectValue: ErrorResponse }
->('auth/enabledMfa', async ({ code1, code2 }, thunkAPI) => {
+>('auth/enableMfa', async ({ code1, code2 }, thunkAPI) => {
   try {
-    await api.enabledMfa(code1, code2);
+    await api.enableMfa(code1, code2);
   } catch (err) {
     const res = err as ErrorResponse;
     return thunkAPI.rejectWithValue(res);
@@ -246,15 +246,15 @@ const slice = createSlice({
       state.loading = false;
     });
     /**
-     * enabledMfa
+     * enableMfa
      */
-    builder.addCase(enabledMfa.pending, (state) => {
+    builder.addCase(enableMfa.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(enabledMfa.fulfilled, (state) => {
+    builder.addCase(enableMfa.fulfilled, (state) => {
       state.loading = false;
     });
-    builder.addCase(enabledMfa.rejected, (state, { payload }) => {
+    builder.addCase(enableMfa.rejected, (state, { payload }) => {
       state.loading = false;
       state.alert = {
         severity: 'error',

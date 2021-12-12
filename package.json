@@ -7,8 +7,7 @@
     "build": "webpack --mode production",
     "watch": "webpack --watch",
     "test": "jest",
-    "server": "nodemon _backend/server.ts",
-    "server2": "nodemon --config nodemon.json",
+    "server": "nodemon --config nodemon.json",
     "eslint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
     "prettier:fix": "prettier --write ."
   },

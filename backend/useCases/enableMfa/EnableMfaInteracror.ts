@@ -137,7 +137,7 @@ export class EnableMfaInteractor {
       return this._presenter.show({
         statusCode: 500,
         failured: {
-          resource: 'enabled_mfa',
+          resource: 'enable_mfa',
           code: 'unexpected_failure',
           message: 'ユーザ情報の更新に失敗しました',
         },

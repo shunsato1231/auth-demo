@@ -69,7 +69,7 @@ mongoose
   });
 
 // Add APIs
-app.use('/api', BaseRouter);
+app.use(BaseRouter);
 
 // set port, listen for requests
 const PORT = process.env.API_PORT || 8080;

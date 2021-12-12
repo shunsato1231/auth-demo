@@ -5,7 +5,7 @@ import { Dispatch } from '~/store';
 import {
   getMfaQr,
   getMfaSettingCode,
-  enabledMfa,
+  enableMfa,
   signOut as storeSignOut,
 } from '~/store/auth';
 
@@ -110,7 +110,7 @@ export const useMfaSettingPage = ({
 
   const verify = useCallback(
     async ({ code1, code2 }: { code1: string; code2: string }) => {
-      dispatch(enabledMfa({ code1, code2 }))
+      dispatch(enableMfa({ code1, code2 }))
         .then(unwrapResult)
         .then(() => {
           toForwardStep();
