@@ -4,3 +4,4 @@ export * from './GetMfaSettingCodePresenter';
 export * from './VerifyMfaPresenter';
 export * from './EnableMfaPresenter';
 export * from './GetMfaQrCodePresenter';
+export * from './RefreshTokenPresenter';

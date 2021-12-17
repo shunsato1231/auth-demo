@@ -1,6 +1,7 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import DotenvWebpack from 'dotenv-webpack';
+import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
 const src = path.resolve(__dirname, 'frontend');
 const dist = path.resolve(__dirname, 'dist');
@@ -31,6 +32,7 @@ const config = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    plugins: [new TsconfigPathsPlugin({ configFile: './tsconfig.json' })],
     alias: {
       '~': src,
     },

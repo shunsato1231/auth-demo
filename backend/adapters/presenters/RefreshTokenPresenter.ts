@@ -1,19 +1,21 @@
-import { SignIn, Output } from '@useCases';
+import { RefreshToken, Output } from '@useCases';
 import { HTTPView } from './HTTPView';
 
-export class SignInPresenter implements Output<SignIn.SignInResponseDTO> {
+export class RefreshTokenPresenter
+  implements Output<RefreshToken.RefreshTokenResponseDTO>
+{
   private _view!: HTTPView;
-  private _token!: SignIn.IToken;
+  private _token!: RefreshToken.IToken;
 
   get view(): HTTPView {
     return this._view;
   }
 
-  get token(): SignIn.IToken {
+  get token(): RefreshToken.IToken {
     return this._token;
   }
 
-  public show(response: SignIn.SignInResponseDTO): void {
+  public show(response: RefreshToken.RefreshTokenResponseDTO): void {
     if (response.statusCode === 200 && response.token) {
       this._view = {
         statusCode: 200,

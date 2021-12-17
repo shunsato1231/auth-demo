@@ -1,10 +1,12 @@
 import { GetMfaQrCode } from '@useCases';
+import { JWT_ACCESS_TOKEN_NAME } from '@utils';
 import { IncomingHttpHeaders } from 'http';
 
 type APIGetMfaQrCodeInput = {
   params: unknown;
   headers?: IncomingHttpHeaders;
   body: undefined;
+  cookies: { [key: string]: string };
 };
 
 export class GetMfaQrCodeController {
@@ -20,9 +22,12 @@ export class GetMfaQrCodeController {
   }
 
   async run(): Promise<void> {
-    const authHeader = this._input.headers?.['authorization'];
-    const token =
-      authHeader?.split(' ')[0] === 'Bearer' ? authHeader?.split(' ')[1] : '';
-    await this._getMfaQrCodeInteractor.execute(token);
+    const jwtAccessToken = this._input.cookies?.[JWT_ACCESS_TOKEN_NAME];
+    const csrfAccessToken = this._input.headers?.['x-csrf-token'];
+
+    await this._getMfaQrCodeInteractor.execute(
+      jwtAccessToken,
+      csrfAccessToken as string
+    );
   }
 }

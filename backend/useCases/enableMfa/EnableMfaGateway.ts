@@ -5,10 +5,10 @@ export interface IPayload {
 }
 export interface EnableMfaGateway {
   findUserById(id: UniqueEntityID): Promise<User | undefined>;
-  decodeToken<IPayload>(token: string): IPayload;
+  verifyAccessToken<IPayload>(jwt: string, csrf: string): Promise<IPayload>;
   verifyMultiTOTP(code1: string, code2: string, secretKey: string): boolean;
   startTransaction(): void;
   endTransaction(): Promise<void>;
   save(user: User): Promise<void>;
-  createToken(payload: { id: string; mfaVerified: boolean }): string;
+  createAccessToken<T>(payload: T): Promise<{ jwt: string; csrf: string }>;
 }

@@ -49,16 +49,10 @@ export class SignUpInteractor {
     }
 
     const newUser = newUserResult.value;
-    let token;
-
     try {
       this._gateway.startTransaction();
       await this._gateway.save(newUser);
       await this._gateway.endTransaction();
-      token = this._gateway.createToken({
-        id: newUser.id.toString(),
-        mfaVerified: false,
-      });
     } catch {
       return this._presenter.show({
         statusCode: 500,
@@ -72,11 +66,6 @@ export class SignUpInteractor {
 
     return this._presenter.show({
       statusCode: 200,
-      success: {
-        email: newUser.email,
-        mfaEnabled: newUser.mfaEnabled,
-        token,
-      },
     });
   }
 }

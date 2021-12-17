@@ -34,7 +34,7 @@ export class SignInInteractor {
       });
     }
 
-    if (!user.comparePassword(data.password)) {
+    if (!(await user.comparePassword(data.password))) {
       return this._presenter.show({
         statusCode: 401,
         failured: {
@@ -52,12 +52,26 @@ export class SignInInteractor {
       });
     }
 
-    let token;
-
     try {
-      token = this._gateway.createToken({
+      const accessToken = await this._gateway.createAccessToken({
         id: user.id.toString(),
         mfaVerified: false,
+      });
+
+      const refreshToken = await this._gateway.createRefreshToken({
+        id: user.id.toString(),
+      });
+
+      return this._presenter.show({
+        statusCode: 200,
+        success: {
+          email: user.email,
+          mfaEnabled: user.mfaEnabled,
+        },
+        token: {
+          accessToken,
+          refreshToken,
+        },
       });
     } catch {
       return this._presenter.show({
@@ -69,14 +83,5 @@ export class SignInInteractor {
         },
       });
     }
-
-    return this._presenter.show({
-      statusCode: 200,
-      success: {
-        email: user.email,
-        mfaEnabled: user.mfaEnabled,
-        token,
-      },
-    });
   }
 }

@@ -16,11 +16,15 @@ export class VerifyMfaInteractor {
 
   public async execute(
     data: VerifyMfaRequestDTO,
-    token: string
+    jwtAccessToken: string,
+    csrfAccessToken: string
   ): Promise<void> {
     let id;
     try {
-      const payload = this._gateway.decodeToken<IPayload>(token);
+      const payload = await this._gateway.verifyAccessToken<IPayload>(
+        jwtAccessToken,
+        csrfAccessToken
+      );
       id = payload.id;
     } catch (err) {
       return this._presenter.show({
@@ -77,12 +81,15 @@ export class VerifyMfaInteractor {
       });
     }
 
-    let newToken;
-
     try {
-      newToken = this._gateway.createToken({
+      const newToken = await this._gateway.createAccessToken({
         id: user.id.toString(),
         mfaVerified: true,
+      });
+
+      return this._presenter.show({
+        statusCode: 200,
+        token: newToken,
       });
     } catch {
       return this._presenter.show({
@@ -94,10 +101,5 @@ export class VerifyMfaInteractor {
         },
       });
     }
-
-    return this._presenter.show({
-      statusCode: 200,
-      success: newToken,
-    });
   }
 }

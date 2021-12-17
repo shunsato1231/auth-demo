@@ -30,3 +30,14 @@ https://www.itmanage.co.jp/column/http-www-request-response-statuscode/#anc004
 
 https://github.com/FilipeMata/clean_architecture_typescript_example
 https://github.com/vishudamo/node-clean-architecture/tree/20dbe5d7903bffe3895e77ebd71fa876f23c1db9
+
+https://qiita.com/nqyutq/items/32fbcb56218594f4a341
+https://tech-lab.sios.jp/archives/25565
+https://garafu.blogspot.com/2017/04/nodejs-express-csrfprotection.html#usage
+https://fujiten3.hatenablog.com/entry/2019/07/13/130459
+https://qiita.com/Hiro-mi/items/18e00060a0f8654f49d6#csrf%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6-8
+
+https://qiita.com/kmatae/items/0ce25ac6bde0b301402a
+
+https://blog.tilfin.net/2020/02/24/issue-and-verify-jwt-nodejs/
+https://www.wakuwakubank.com/posts/737-nodejs-express-cookie/

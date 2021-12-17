@@ -8,7 +8,7 @@ export interface IPayload {
 export interface GetMfaSettingCodeGateway {
   findUserById(id: UniqueEntityID): Promise<User | undefined>;
   generateSecreyKey(): Promise<string>;
-  decodeToken<IPayload>(token: string): IPayload;
+  verifyAccessToken<IPayload>(jwt: string, csrf: string): Promise<IPayload>;
   startTransaction(): void;
   endTransaction(): Promise<void>;
   save(user: User): Promise<void>;

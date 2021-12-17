@@ -95,6 +95,7 @@ export const enableMfa = createAsyncThunk<
 export type Severity = 'success' | 'error';
 
 export interface AuthState {
+  email: string;
   mfaEnabled: boolean;
   mfaVerified: boolean;
   tokenVerified: boolean;
@@ -106,6 +107,7 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
+  email: '',
   mfaEnabled: false,
   mfaVerified: false,
   tokenVerified: false,
@@ -130,21 +132,22 @@ const slice = createSlice({
     builder.addCase(signUp.fulfilled, (state) => {
       state.loading = false;
       state.mfaEnabled = false;
-      state.tokenVerified = true;
+      state.tokenVerified = false;
       state.alert = {
         severity: 'success',
-        message: '新規登録が完了しました',
+        message: '新規登録が完了しました。サインインしてください。',
       };
     });
     builder.addCase(signUp.rejected, (state, { payload }) => {
       state.loading = false;
-      state.mfaEnabled = false;
-      state.mfaVerified = false;
-      state.tokenVerified = false;
       state.alert = {
         severity: 'error',
         message: payload?.message || '',
       };
+      if (payload?.code === 'invalid_token') {
+        state.tokenVerified = false;
+        state.mfaVerified = false;
+      }
     });
     /**
      * signIn
@@ -153,6 +156,7 @@ const slice = createSlice({
       state.loading = true;
     });
     builder.addCase(signIn.fulfilled, (state, { payload }) => {
+      state.email = payload.email;
       state.loading = false;
       state.mfaEnabled = payload.mfaEnabled;
       state.mfaVerified = false;
@@ -171,6 +175,10 @@ const slice = createSlice({
         severity: 'error',
         message: payload?.message || '',
       };
+      if (payload?.code === 'invalid_token') {
+        state.tokenVerified = false;
+        state.mfaVerified = false;
+      }
     });
     /**
      * signOut
@@ -180,7 +188,7 @@ const slice = createSlice({
     });
     builder.addCase(signOut.fulfilled, (state) => {
       state.loading = false;
-
+      state.email = '';
       state.mfaEnabled = false;
       state.mfaVerified = false;
       state.tokenVerified = false;
@@ -216,6 +224,10 @@ const slice = createSlice({
         severity: 'error',
         message: payload?.message || '',
       };
+      if (payload?.code === 'invalid_token') {
+        state.tokenVerified = false;
+        state.mfaVerified = false;
+      }
     });
     /**
      * getMfaQr
@@ -232,6 +244,10 @@ const slice = createSlice({
         severity: 'error',
         message: payload?.message || '',
       };
+      if (payload?.code === 'invalid_token') {
+        state.tokenVerified = false;
+        state.mfaVerified = false;
+      }
     });
     /**
      * getMfaSettingCode
@@ -242,8 +258,16 @@ const slice = createSlice({
     builder.addCase(getMfaSettingCode.fulfilled, (state) => {
       state.loading = false;
     });
-    builder.addCase(getMfaSettingCode.rejected, (state) => {
+    builder.addCase(getMfaSettingCode.rejected, (state, { payload }) => {
       state.loading = false;
+      state.alert = {
+        severity: 'error',
+        message: payload?.message || '',
+      };
+      if (payload?.code === 'invalid_token') {
+        state.tokenVerified = false;
+        state.mfaVerified = false;
+      }
     });
     /**
      * enableMfa
@@ -260,6 +284,10 @@ const slice = createSlice({
         severity: 'error',
         message: payload?.message || '',
       };
+      if (payload?.code === 'invalid_token') {
+        state.tokenVerified = false;
+        state.mfaVerified = false;
+      }
     });
   },
 });

@@ -2,10 +2,6 @@ import { IError } from '@utils';
 
 export interface SignUpResponseDTO {
   statusCode: number;
-  success?: {
-    email: string;
-    mfaEnabled: boolean;
-    token: string;
-  };
+  success?: undefined;
   failured?: IError;
 }

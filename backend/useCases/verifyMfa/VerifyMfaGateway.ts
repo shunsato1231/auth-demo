@@ -7,6 +7,6 @@ export interface IPayload {
 export interface VerifyMfaGateway {
   findUserById(id: UniqueEntityID): Promise<User | undefined>;
   verifyTOTP(code: string, secretKey: string): boolean;
-  decodeToken<IPayload>(token: string): IPayload;
-  createToken(payload: IPayload): string;
+  verifyAccessToken<IPayload>(jwt: string, csrf: string): Promise<IPayload>;
+  createAccessToken(payload: IPayload): Promise<{ jwt: string; csrf: string }>;
 }

@@ -8,6 +8,7 @@ export interface useHomePageType {
   signOut: () => Promise<void>;
   mfaEnabledFlag: boolean;
   pushMfaSetting: () => void;
+  email: string;
 }
 
 export const useHomePage = (): useHomePageType => {
@@ -25,5 +26,6 @@ export const useHomePage = (): useHomePageType => {
     signOut,
     mfaEnabledFlag: auth.mfaEnabled,
     pushMfaSetting,
+    email: auth.email,
   };
 };

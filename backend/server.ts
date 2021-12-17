@@ -8,6 +8,7 @@ import {
 import BcryptHash from './infrastructure/pulgins/BcryptHash';
 import ObjectIdGenerator from './infrastructure/pulgins/ObjectIdGenerator';
 import BaseRouter from './infrastructure/routes';
+import cookieParser from 'cookie-parser';
 
 // init id factory
 UniqueEntityIDGeneratorFactory.getInstance().initialize(
@@ -49,6 +50,9 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+// use cookie
+app.use(cookieParser());
 
 // connect mongoose
 mongoose

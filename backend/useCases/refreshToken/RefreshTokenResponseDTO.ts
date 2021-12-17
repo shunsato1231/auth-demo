@@ -4,12 +4,9 @@ export interface IToken {
   accessToken: { jwt: string; csrf: string };
   refreshToken: { jwt: string; csrf: string };
 }
-export interface SignInResponseDTO {
+export interface RefreshTokenResponseDTO {
   statusCode: number;
-  success?: {
-    email: string;
-    mfaEnabled: boolean;
-  };
+  success?: undefined;
   token?: IToken;
   failured?: IError;
 }

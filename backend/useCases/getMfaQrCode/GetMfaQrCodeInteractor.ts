@@ -15,8 +15,11 @@ export class GetMfaQrCodeInteractor {
     this._presenter = presenter;
   }
 
-  public async execute(token: string): Promise<void> {
-    if (!token) {
+  public async execute(
+    jwtAccessToken: string,
+    csrfAccessToken: string
+  ): Promise<void> {
+    if (!jwtAccessToken || !csrfAccessToken) {
       return this._presenter.show({
         statusCode: 401,
         failured: {
@@ -30,7 +33,10 @@ export class GetMfaQrCodeInteractor {
     let id;
 
     try {
-      const payload = this._gateway.decodeToken<IPayload>(token);
+      const payload = await this._gateway.verifyAccessToken<IPayload>(
+        jwtAccessToken,
+        csrfAccessToken
+      );
       id = payload.id;
     } catch (err) {
       return this._presenter.show({

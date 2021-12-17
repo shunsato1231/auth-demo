@@ -1,12 +1,10 @@
+import {
+  CSRF_ACCESS_TOKEN_NAME,
+  CSRF_REFRESH_TOKEN_NAME,
+  IError,
+} from '@utils';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-
-const ACCCESS_TOKEN_KEY = 'access_token';
-interface IHeaders {
-  accept?: string;
-  authorizeation?: string;
-  Authorization?: string;
-  'Content-Type'?: string;
-}
+import { getCookie } from '~/utils/getCookie';
 
 export interface Error {
   field: string;
@@ -27,82 +25,95 @@ export interface User {
   token: string;
 }
 
-const getToken = async () => {
-  try {
-    const item = window.localStorage.getItem(ACCCESS_TOKEN_KEY);
-    return item ? JSON.parse(item) : null;
-  } catch (error) {
-    return null;
+const http = axios.create({
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'X-Requested-With': 'XMLHttpRequest',
+  },
+});
+
+const getRefreshToken = () =>
+  http
+    .post(
+      'api/auth/refresh_token',
+      {},
+      {
+        withCredentials: true,
+        headers: { 'X-CSRF-TOKEN': getCookie(CSRF_REFRESH_TOKEN_NAME) || '' },
+      }
+    )
+    .then(() => getCookie(CSRF_ACCESS_TOKEN_NAME));
+
+let refreshTokenPromise: Promise<string | undefined> | null;
+
+http.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    if (
+      error.response.data.code !== 'invalid_token' ||
+      error.response.data.resource === 'refresh_token' ||
+      error.config._retry
+    ) {
+      return Promise.reject(error);
+    }
+
+    if (!refreshTokenPromise) {
+      error.config._retry = true;
+      refreshTokenPromise = getRefreshToken().then((token) => {
+        refreshTokenPromise = null;
+        return token;
+      });
+    }
+
+    return refreshTokenPromise.then((token) => {
+      error.config.headers['X-CSRF-TOKEN'] = token;
+      return http.request(error.config);
+    });
   }
-};
-
-const setToken = async (token: string) => {
-  try {
-    window.localStorage.setItem(ACCCESS_TOKEN_KEY, JSON.stringify(token));
-  } catch (error) {
-    return null;
-  }
-};
-
-const getHeaders = async (
-  accept = null,
-  authorization = null,
-  contentType = 'application/json'
-) => {
-  const result: IHeaders = {};
-  const userToken = await getToken();
-
-  if (accept) result['accept'] = accept;
-  if (authorization) result['Authorization'] = authorization;
-  if (userToken && !authorization) {
-    result['Authorization'] = 'Bearer ' + userToken;
-  }
-  if (contentType) result['Content-Type'] = contentType;
-
-  return result;
-};
-
-const handleError = (err: unknown) => {
-  if (axios.isAxiosError(err)) {
-    throw (err as AxiosError<ErrorResponse>).response?.data;
-  } else {
-    throw err;
-  }
-};
+);
 
 const get = async <T extends unknown>(
   url: string,
-  params?: { [index: string]: unknown },
-  headers?: IHeaders,
+  params?: { [key: string]: unknown },
   timeout?: number,
-  responseTypes = 'json'
+  setCsrfAccessToken = true
 ) => {
-  const defaultHeaders = await getHeaders();
   const config: { [index: string]: unknown } = {};
+  const XCsrfTokenHeader = {
+    'X-CSRF-TOKEN': getCookie(CSRF_ACCESS_TOKEN_NAME) || '',
+  };
 
-  config.headers = headers ? headers : defaultHeaders;
-  config.responseType = responseTypes;
+  if (setCsrfAccessToken) config.headers = XCsrfTokenHeader;
   if (params) config.params = params;
   if (timeout) config.timeout = timeout;
 
-  const result = axios.get<T>(url, config);
-  return result;
+  return http.get<unknown, AxiosResponse<T>>(url, config);
 };
 
 const post = async <T extends unknown>(
   url: string,
   params = {},
-  headers?: IHeaders,
-  timeout?: number
+  timeout?: number,
+  setCsrfAccessToken = true
 ) => {
-  const defaultHeaders = await getHeaders();
   const config: { [index: string]: unknown } = {};
+  const XCsrfTokenHeader = {
+    'X-CSRF-TOKEN': getCookie(CSRF_ACCESS_TOKEN_NAME) || '',
+  };
 
-  config.headers = headers ? headers : defaultHeaders;
+  if (setCsrfAccessToken) config.headers = XCsrfTokenHeader;
   if (timeout) config.timeout = timeout;
 
-  const result = axios.post<unknown, AxiosResponse<T>>(url, params, config);
-  return result;
+  return http.post<unknown, AxiosResponse<T>>(url, params, config);
+};
+
+const handleError = (err: unknown) => {
+  if (axios.isAxiosError(err)) {
+    throw (err as AxiosError<IError>).response?.data;
+  } else {
+    throw err;
+  }
 };
 
 export default {
@@ -110,7 +121,6 @@ export default {
     try {
       const res = await post<User>('/api/auth/signUp', { email, password });
       const user = res.data;
-      setToken(user.token);
       return user;
     } catch (err) {
       return handleError(err);
@@ -120,21 +130,21 @@ export default {
     try {
       const res = await post<User>('/api/auth/signIn', { email, password });
       const user = res.data;
-      setToken(user.token);
       return user;
     } catch (err) {
       return handleError(err);
     }
   },
   signOut: async (): Promise<void> => {
-    await setToken('');
-  },
-  verifyMfa: async (code: string): Promise<string> => {
     try {
-      const res = await post<string>('/api/auth/verify_mfa', { code });
-      const token = res.data;
-      setToken(token);
-      return token;
+      await post('/api/auth/signout');
+    } catch (err) {
+      return handleError(err);
+    }
+  },
+  verifyMfa: async (code: string): Promise<void> => {
+    try {
+      await post<string>('/api/auth/verify_mfa', { code });
     } catch (err) {
       return handleError(err);
     }
@@ -158,11 +168,9 @@ export default {
       return handleError(err);
     }
   },
-  enableMfa: async (code1: string, code2: string): Promise<string> => {
+  enableMfa: async (code1: string, code2: string): Promise<void> => {
     try {
-      const res = await post<string>('/api/auth/enable_mfa', { code1, code2 });
-      setToken(res.data);
-      return res.data;
+      await post<string>('/api/auth/enable_mfa', { code1, code2 });
     } catch (err) {
       return handleError(err);
     }

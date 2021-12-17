@@ -5,3 +5,4 @@ export * as GetMfaSettingCode from './getMfaSettingCode';
 export * as VerifyMfa from './verifyMfa';
 export * as EnableMfa from './enableMfa';
 export * as GetMfaQrCode from './getMfaQrCode';
+export * as RefreshToken from './refreshToken';

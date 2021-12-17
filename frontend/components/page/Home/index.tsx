@@ -1,9 +1,9 @@
 import React from 'react';
 import { useHomePage } from './hook';
 
-import { Container, Typography, Stack, Button } from '@mui/material';
+import { Container, Typography, Stack, Button, Box } from '@mui/material';
 export const Home: React.FC = (): JSX.Element => {
-  const { signOut, mfaEnabledFlag, pushMfaSetting } = useHomePage();
+  const { signOut, mfaEnabledFlag, pushMfaSetting, email } = useHomePage();
 
   return (
     <Container
@@ -28,15 +28,30 @@ export const Home: React.FC = (): JSX.Element => {
         }}>
         Home
       </Typography>
-      <p>{mfaEnabledFlag}</p>
-      {mfaEnabledFlag ? (
-        <p>2段階認証は正しく設定されています。</p>
-      ) : (
-        <>
-          <p>2段階認証が設定されていません。</p>
-          <p>下記のボタンから設定してください。</p>
-        </>
-      )}
+      <Stack
+        spacing={2}
+        sx={{
+          textAlign: 'center',
+        }}>
+        <Box
+          component="p"
+          sx={{
+            mb: 2,
+          }}>
+          <Typography component="span" fontWeight="bold">
+            {email}
+          </Typography>
+          としてログインしています。
+        </Box>
+        {mfaEnabledFlag ? (
+          <p>2段階認証は正しく設定されています。</p>
+        ) : (
+          <>
+            <p>2段階認証が設定されていません。</p>
+            <p>下記のボタンから設定してください。</p>
+          </>
+        )}
+      </Stack>
 
       <Stack
         sx={{

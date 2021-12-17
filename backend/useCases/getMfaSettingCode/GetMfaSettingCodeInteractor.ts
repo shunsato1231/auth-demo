@@ -14,8 +14,11 @@ export class GetMfaSettingCodeInteractor {
     this._presenter = presenter;
   }
 
-  public async execute(token: string): Promise<void> {
-    if (!token) {
+  public async execute(
+    jwtAccessToken: string,
+    csrfAccessToken: string
+  ): Promise<void> {
+    if (!jwtAccessToken || !csrfAccessToken) {
       return this._presenter.show({
         statusCode: 401,
         failured: {
@@ -25,7 +28,23 @@ export class GetMfaSettingCodeInteractor {
         },
       });
     }
-    const { id } = this._gateway.decodeToken<IPayload>(token);
+    let id;
+    try {
+      const payload = await this._gateway.verifyAccessToken<IPayload>(
+        jwtAccessToken,
+        csrfAccessToken
+      );
+      id = payload.id;
+    } catch (err) {
+      return this._presenter.show({
+        statusCode: 400,
+        failured: {
+          resource: 'mfa_code',
+          code: 'invalid_token',
+          message: 'トークンが正しくありません。ログインし直してください。',
+        },
+      });
+    }
     const user = await this._gateway.findUserById(new UniqueEntityID(id));
 
     if (!user) {

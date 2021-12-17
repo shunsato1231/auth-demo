@@ -5,6 +5,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { Dispatch } from '~/store';
 import { signUp as storeSignUp } from '~/store/auth';
 import { regex } from '~/utils/regex';
+import { useHistory } from 'react-router';
 
 export interface useSignInType {
   useSignUpForm: UseFormReturn;
@@ -15,6 +16,11 @@ export interface useSignInType {
 }
 
 export const useSignUpPage = (): useSignInType => {
+  /**
+   * routing
+   */
+  const history = useHistory();
+
   /**
    * store
    */
@@ -63,6 +69,9 @@ export const useSignUpPage = (): useSignInType => {
     ({ email, password }: { email: string; password: string }) => {
       dispatch(storeSignUp({ email, password }))
         .then(unwrapResult)
+        .then(() => {
+          history.push('signin');
+        })
         .catch((err) => {
           if (err?.errors) {
             err.errors.map(

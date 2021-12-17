@@ -1,7 +1,7 @@
 import { Controllers, Gateways, Presenters } from '@adapters';
 import { MongoTransactionalDataMappers } from '@infrastructure/db';
 import { JsonWebToken } from '@infrastructure/pulgins/JsonWebToken';
-import { SignIn } from '@useCases';
+import { RefreshToken } from '@useCases';
 import {
   CSRF_ACCESS_TOKEN_NAME,
   CSRF_REFRESH_TOKEN_NAME,
@@ -13,25 +13,25 @@ import mongoose from 'mongoose';
 const secretKey = process.env.AUTH_SECRET || 'secretKey';
 
 export default async (req: Request, res: Response): Promise<void> => {
-  const getSignInGateway = new Gateways.SignInGateway(
+  const getRefreshTokenGateway = new Gateways.RefreshTokenGateway(
     new MongoTransactionalDataMappers(mongoose),
     new JsonWebToken(),
     secretKey
   );
-  const getSignInPresenter = new Presenters.SignInPresenter();
-  const getSignInInteractor = new SignIn.SignInInteractor(
-    getSignInGateway,
-    getSignInPresenter
+  const getRefreshTokenPresenter = new Presenters.RefreshTokenPresenter();
+  const getRefreshTokenInteractor = new RefreshToken.RefreshTokenInteractor(
+    getRefreshTokenGateway,
+    getRefreshTokenPresenter
   );
 
-  const signInController = new Controllers.SignInController(
+  const refreshTokenController = new Controllers.RefreshTokenController(
     req,
-    getSignInInteractor
+    getRefreshTokenInteractor
   );
 
-  await signInController.run();
+  await refreshTokenController.run();
 
-  const token = getSignInPresenter.token;
+  const token = getRefreshTokenPresenter.token;
   if (token) {
     res.cookie(JWT_ACCESS_TOKEN_NAME, token.accessToken.jwt, {
       httpOnly: true,
@@ -49,6 +49,6 @@ export default async (req: Request, res: Response): Promise<void> => {
     });
   }
 
-  const view = getSignInPresenter.view;
+  const view = getRefreshTokenPresenter.view;
   res.status(view.statusCode).json(view.body);
 };
