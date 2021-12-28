@@ -41,3 +41,10 @@ https://qiita.com/kmatae/items/0ce25ac6bde0b301402a
 
 https://blog.tilfin.net/2020/02/24/issue-and-verify-jwt-nodejs/
 https://www.wakuwakubank.com/posts/737-nodejs-express-cookie/
+
+
+/*** storage ***/
+https://auth0.com/blog/secure-browser-storage-the-facts/
+https://github.com/elie29/jwt-token-storage
+https://elie29.medium.com/frontend-jwt-token-storage-77cbe6dc680b
+https://logmi.jp/tech/articles/324349
