@@ -87,7 +87,7 @@ export class GetMfaQrCodeInteractor {
     let mfaSecretKey;
     if (!user.mfaSecretKey) {
       mfaSecretKey = await this._gateway.generateSecreyKey();
-      const updatedUserResult = User.build(
+      const updatedUserResult = await User.build(
         {
           email: user.email,
           password: user.password,

@@ -8,7 +8,7 @@ export default class MongoUserMapper extends MongoMapper<IUser> {
     super(session, UserModel);
   }
 
-  public toDomain(userRowDTO: IUser & { _id: ObjectId }): User {
+  public async toDomain(userRowDTO: IUser & { _id: ObjectId }): Promise<User> {
     const userProps: IUser = {
       email: userRowDTO.email,
       password: userRowDTO.password,
@@ -17,7 +17,7 @@ export default class MongoUserMapper extends MongoMapper<IUser> {
     };
 
     const uniqueId = new UniqueEntityID(userRowDTO._id);
-    return User.build(userProps, uniqueId).value;
+    return (await User.build(userProps, uniqueId)).value;
   }
 
   public toPersistence(user: User): IUser & { _id: ObjectId } {

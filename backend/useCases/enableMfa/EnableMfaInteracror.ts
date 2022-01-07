@@ -122,7 +122,7 @@ export class EnableMfaInteractor {
       });
     }
 
-    const updatedUserResult = User.build(
+    const updatedUserResult = await User.build(
       {
         email: user.email,
         password: user.password,

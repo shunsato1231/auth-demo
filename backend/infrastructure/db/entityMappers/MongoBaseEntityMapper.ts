@@ -18,7 +18,7 @@ export default abstract class MongoMappers<T> implements Gateways.DataMappers {
   }
 
   public abstract toPersistence(entity: Entity<T>): T & { _id: ObjectId };
-  public abstract toDomain(row: T & { _id: ObjectId }): Entity<T>;
+  public abstract toDomain(row: T & { _id: ObjectId }): Promise<Entity<T>>;
 
   public async find(criteria: unknown): Promise<Entity<T> | undefined> {
     const row = await this._models.findOne(
@@ -33,15 +33,17 @@ export default abstract class MongoMappers<T> implements Gateways.DataMappers {
       return undefined;
     }
 
-    return this.toDomain(row as T & { _id: ObjectId });
+    return await this.toDomain(row as T & { _id: ObjectId });
   }
 
   public async findAll(): Promise<Entity<T>[] | undefined> {
     const rows = await this._models.find({}, null, { session: this._session });
 
-    return rows.map((row) => {
-      return this.toDomain(row as T & { _id: ObjectId });
-    });
+    return await Promise.all(
+      rows.map(async (row) => {
+        return await this.toDomain(row as T & { _id: ObjectId });
+      })
+    );
   }
 
   public async insert(entity: Entity<T>): Promise<void> {

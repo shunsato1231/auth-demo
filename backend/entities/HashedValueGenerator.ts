@@ -1,6 +1,6 @@
 export interface HashedValueGenerator {
-  toHash(value: string): string;
-  compareValue(value: string, hashedValue: string): boolean;
+  toHash(value: string): Promise<string>;
+  compareValue(value: string, hashedValue: string): Promise<boolean>;
 }
 
 export class HashedValueGeneratorFactory {

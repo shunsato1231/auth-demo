@@ -34,7 +34,7 @@ export class SignUpInteractor {
       });
     }
 
-    const newUserResult = User.build({
+    const newUserResult = await User.build({
       email: data.email,
       password: data.password,
       mfaEnabled: false,

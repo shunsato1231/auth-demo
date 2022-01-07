@@ -1,9 +1,6 @@
 import { Result, IError } from '@utils';
 import { Entity, UniqueEntityID } from './';
-import {
-  HashedValueGenerator,
-  HashedValueGeneratorFactory,
-} from './HashedValueGenerator';
+import { HashedValueGeneratorFactory } from './HashedValueGenerator';
 
 export interface IUser {
   email: string;
@@ -19,7 +16,6 @@ export const regex = {
 };
 
 export class User extends Entity<IUser> {
-  private _hashedValueGenerator: HashedValueGenerator;
   get email(): string {
     return this.props.email;
   }
@@ -37,25 +33,19 @@ export class User extends Entity<IUser> {
   }
 
   private constructor(props: IUser, id?: UniqueEntityID) {
-    const hashedValueGenerator =
-      HashedValueGeneratorFactory.getInstance().getHashedValueGenerator();
-
-    if (!id) {
-      props.password = hashedValueGenerator.toHash(props.password);
-    }
-
     super(props, id);
-    this._hashedValueGenerator = hashedValueGenerator;
   }
 
-  public comparePassword(password: string): boolean {
-    return this._hashedValueGenerator.compareValue(
-      password,
-      this.props.password
-    );
+  public async comparePassword(password: string): Promise<boolean> {
+    return HashedValueGeneratorFactory.getInstance()
+      .getHashedValueGenerator()
+      .compareValue(password, this.props.password);
   }
 
-  public static build(props: IUser, id?: UniqueEntityID): Result<User> {
+  public static async build(
+    props: IUser,
+    id?: UniqueEntityID
+  ): Promise<Result<User>> {
     const error: IError = {
       resource: '',
       code: '',
@@ -103,6 +93,12 @@ export class User extends Entity<IUser> {
       error.message = 'ユーザのフィールドの形式に誤りがあります';
 
       return Result.fail<User>(401, error);
+    }
+
+    if (!id) {
+      props.password = await HashedValueGeneratorFactory.getInstance()
+        .getHashedValueGenerator()
+        .toHash(props.password);
     }
 
     return Result.success<User>(new User(props, id));
