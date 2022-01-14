@@ -5,7 +5,7 @@
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "importHelpers": true,
-    "lib": ["DOM", "ES2020"],
+    "lib": ["DOM", "ES2020", "webworker"],
     "jsx": "react",
     "strict": true,
     "sourceMap": true,

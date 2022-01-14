@@ -34,7 +34,13 @@ export const signOut = createAsyncThunk<
   { rejectValue: string }
 >('auth/signOut', async (_, thunkAPI) => {
   try {
-    await api.signOut();
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        data: 'dataToServiceWorker',
+      });
+    } else {
+      throw new Error();
+    }
   } catch (err) {
     return thunkAPI.rejectWithValue(String(err));
   }
@@ -103,6 +109,7 @@ export interface AuthState {
   alert: {
     message: string;
     severity: 'success' | 'error';
+    errorStatus: string;
   };
 }
 
@@ -115,6 +122,7 @@ const initialState: AuthState = {
   alert: {
     message: '',
     severity: 'success',
+    errorStatus: '',
   },
 };
 
@@ -136,6 +144,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'success',
         message: '新規登録が完了しました。サインインしてください。',
+        errorStatus: '',
       };
     });
     builder.addCase(signUp.rejected, (state, { payload }) => {
@@ -143,6 +152,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'error',
         message: payload?.message || '',
+        errorStatus: payload?.errorStatus || '',
       };
       if (payload?.code === 'invalid_token') {
         state.tokenVerified = false;
@@ -164,6 +174,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'success',
         message: 'サインインしました',
+        errorStatus: '',
       };
     });
     builder.addCase(signIn.rejected, (state, { payload }) => {
@@ -174,6 +185,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'error',
         message: payload?.message || '',
+        errorStatus: payload?.errorStatus || '',
       };
       if (payload?.code === 'invalid_token') {
         state.tokenVerified = false;
@@ -195,6 +207,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'success',
         message: 'サインアウトしました',
+        errorStatus: '',
       };
     });
     builder.addCase(signOut.rejected, (state) => {
@@ -202,6 +215,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'error',
         message: 'サインアウト時にエラーが発生しました。',
+        errorStatus: '',
       };
     });
     /**
@@ -216,6 +230,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'success',
         message: '2段階認証が完了しました',
+        errorStatus: '',
       };
     });
     builder.addCase(verifyMfa.rejected, (state, { payload }) => {
@@ -223,6 +238,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'error',
         message: payload?.message || '',
+        errorStatus: payload?.errorStatus || '',
       };
       if (payload?.code === 'invalid_token') {
         state.tokenVerified = false;
@@ -243,6 +259,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'error',
         message: payload?.message || '',
+        errorStatus: payload?.errorStatus || '',
       };
       if (payload?.code === 'invalid_token') {
         state.tokenVerified = false;
@@ -263,6 +280,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'error',
         message: payload?.message || '',
+        errorStatus: payload?.errorStatus || '',
       };
       if (payload?.code === 'invalid_token') {
         state.tokenVerified = false;
@@ -283,6 +301,7 @@ const slice = createSlice({
       state.alert = {
         severity: 'error',
         message: payload?.message || '',
+        errorStatus: payload?.errorStatus || '',
       };
       if (payload?.code === 'invalid_token') {
         state.tokenVerified = false;

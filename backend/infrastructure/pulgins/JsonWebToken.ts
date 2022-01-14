@@ -1,6 +1,5 @@
 import { Token } from '../../adapters/gateways/Token';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 
 export class JsonWebToken implements Token {
   public sign(payload: unknown, secretKey: string, expiresIn: number): string {
@@ -33,20 +32,5 @@ export class JsonWebToken implements Token {
         }
       });
     });
-  }
-
-  createCsrf(): string {
-    return Math.random().toString(36).slice(-8);
-  }
-
-  public toEncrypt(value: string): Promise<string> {
-    return bcrypt.hash(value, 8);
-  }
-
-  public compareEncrypted(
-    original: string,
-    encrypted: string
-  ): Promise<boolean> {
-    return bcrypt.compare(original, encrypted);
   }
 }

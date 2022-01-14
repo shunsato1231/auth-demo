@@ -1,6 +1,7 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import DotenvWebpack from 'dotenv-webpack';
+import WorkboxPlugin from 'workbox-webpack-plugin';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
 const src = path.resolve(__dirname, 'frontend');
@@ -41,6 +42,11 @@ const config = {
     new HtmlWebpackPlugin({
       template: src + '/index.html',
       filename: 'index.html',
+    }),
+    new WorkboxPlugin.InjectManifest({
+      maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
+      swSrc: src + '/service-worker.ts',
+      swDest: 'service-worker.js',
     }),
     new DotenvWebpack(),
   ],

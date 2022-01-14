@@ -1,12 +1,10 @@
 import { EnableMfa } from '@useCases';
-import { JWT_ACCESS_TOKEN_NAME } from '@utils';
 import { IncomingHttpHeaders } from 'http';
 
 type APIEnableMfaInput = {
   params: unknown;
   headers: IncomingHttpHeaders;
   body: EnableMfa.EnableMfaRequestDTO;
-  cookies: { [key: string]: string };
 };
 
 export class EnableMfaController {
@@ -26,13 +24,11 @@ export class EnableMfaController {
       code1: this._input.body.code1,
       code2: this._input.body.code2,
     };
-    const jwtAccessToken = this._input.cookies?.[JWT_ACCESS_TOKEN_NAME];
-    const csrfAccessToken = this._input.headers?.['x-csrf-token'];
 
-    await this._enableMfaInteractor.execute(
-      request,
-      jwtAccessToken,
-      csrfAccessToken as string
-    );
+    const authHeader = this._input.headers?.['authorization'];
+    const token =
+      authHeader?.split(' ')[0] === 'Bearer' ? authHeader?.split(' ')[1] : '';
+
+    await this._enableMfaInteractor.execute(request, token);
   }
 }

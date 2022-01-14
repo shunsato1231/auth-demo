@@ -14,11 +14,8 @@ export class GetMfaSettingCodeInteractor {
     this._presenter = presenter;
   }
 
-  public async execute(
-    jwtAccessToken: string,
-    csrfAccessToken: string
-  ): Promise<void> {
-    if (!jwtAccessToken || !csrfAccessToken) {
+  public async execute(accessToken: string): Promise<void> {
+    if (!accessToken) {
       return this._presenter.show({
         statusCode: 401,
         failured: {
@@ -30,10 +27,7 @@ export class GetMfaSettingCodeInteractor {
     }
     let id;
     try {
-      const payload = await this._gateway.verifyAccessToken<IPayload>(
-        jwtAccessToken,
-        csrfAccessToken
-      );
+      const payload = await this._gateway.verifyToken<IPayload>(accessToken);
       id = payload.id;
     } catch (err) {
       return this._presenter.show({

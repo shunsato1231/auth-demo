@@ -7,16 +7,24 @@ import {
   loadingSelector,
   messageSelector,
   severitySelector,
+  errorStatusSelector,
 } from '~/store/alert';
 import { Dispatch } from '~/store';
 
-import { Backdrop, CircularProgress, Snackbar, Alert } from '@mui/material';
+import {
+  Backdrop,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  AlertTitle,
+} from '@mui/material';
 
 export const DefaultLayout: React.FC = ({ children }) => {
   const dispatch = useDispatch<Dispatch>();
   const auth = useSelector(authSelector);
   const loading = useSelector(loadingSelector);
   const message = useSelector(messageSelector);
+  const errorStatus = useSelector(errorStatusSelector);
   const severity = useSelector(severitySelector);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -24,7 +32,6 @@ export const DefaultLayout: React.FC = ({ children }) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
 
@@ -39,6 +46,18 @@ export const DefaultLayout: React.FC = ({ children }) => {
     }
   }, [auth.alert, dispatch]);
 
+  useEffect(() => {
+    navigator.serviceWorker.register('/service-worker.js').catch(() => {
+      setOpen(true);
+      dispatch(
+        setAlert({
+          message: 'ServiceWorkerの登録に失敗しました',
+          severity: 'error',
+        })
+      );
+    });
+  }, [dispatch]);
+
   return (
     <>
       <Backdrop
@@ -48,8 +67,17 @@ export const DefaultLayout: React.FC = ({ children }) => {
         open={loading}>
         <CircularProgress sx={{ color: 'white' }} />
       </Backdrop>
-      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-        <Alert severity={severity}>{message}</Alert>
+      <Snackbar open={open} autoHideDuration={2500} onClose={handleClose}>
+        <Alert severity={severity}>
+          {errorStatus ? (
+            <>
+              <AlertTitle>{message}</AlertTitle>
+              {errorStatus}
+            </>
+          ) : (
+            message
+          )}
+        </Alert>
       </Snackbar>
       {children}
     </>

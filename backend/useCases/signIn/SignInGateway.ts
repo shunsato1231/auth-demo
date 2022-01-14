@@ -4,8 +4,6 @@ export interface SignInGateway {
   createAccessToken(payload: {
     id: string;
     mfaVerified: boolean;
-  }): Promise<{ jwt: string; csrf: string }>;
-  createRefreshToken(payload: {
-    id: string;
-  }): Promise<{ jwt: string; csrf: string }>;
+  }): Promise<string>;
+  createRefreshToken(payload: { id: string }): Promise<string>;
 }

@@ -22,11 +22,9 @@ interface IRepository {
   remove(e: Entity<unknown>): Promise<void>;
   removeCollection(entities: Entity<unknown>[]): Promise<void>;
   endTransaction(): Promise<void>;
-
-  createAccessToken<T>(payload: T): Promise<{ jwt: string; csrf: string }>;
-  verifyAccessToken<T>(jwt: string, csrf: string): Promise<T>;
-  createRefreshToken<T>(payload: T): Promise<{ jwt: string; csrf: string }>;
-  verifyRefreshToken<T>(jwt: string, csrf: string): Promise<T>;
+  createAccessToken<T>(payload: T): Promise<string>;
+  createRefreshToken<T>(payload: T): Promise<string>;
+  verifyToken<T>(token: string): Promise<T>;
 }
 
 export class BaseRepository implements IRepository {
@@ -150,70 +148,23 @@ export class BaseRepository implements IRepository {
     this.uow = undefined;
   }
 
-  public async createAccessToken<T>(
-    payload: T
-  ): Promise<{ jwt: string; csrf: string }> {
+  public async createAccessToken<T>(payload: T): Promise<string> {
     try {
-      const csrf = this._token.createCsrf();
-      const encryptedCsrf = await this._token.toEncrypt(csrf);
-      const jwt = this._token.signJwt(
-        { ...payload, csrf: encryptedCsrf },
-        this._tokenSecretKey,
-        '30m'
-      );
-
-      return { jwt, csrf };
+      return this._token.signJwt(payload, this._tokenSecretKey, '30m');
     } catch {
       throw new Error('Failed to generate an access token');
     }
   }
 
-  public async verifyAccessToken<T>(jwt: string, csrf: string): Promise<T> {
-    const payload = await this._token.verifyJwt<T & { csrf: string }>(
-      jwt,
-      this._tokenSecretKey
-    );
-    const verifyCsrf = await this._token.compareEncrypted(csrf, payload.csrf);
-    if (!verifyCsrf) {
-      throw new Error('Invalid csrf access token');
-    } else {
-      const result: T & { csrf?: string } = payload;
-      delete result.csrf;
-      return result;
-    }
-  }
-
-  public async createRefreshToken<T>(
-    payload: T
-  ): Promise<{ jwt: string; csrf: string }> {
+  public async createRefreshToken<T>(payload: T): Promise<string> {
     try {
-      const csrf = this._token.createCsrf();
-      const encryptedCsrf = await this._token.toEncrypt(csrf);
-      const jwt = this._token.signJwt(
-        { ...payload, csrf: encryptedCsrf },
-        this._tokenSecretKey,
-        '2h'
-      );
-
-      return { jwt, csrf };
+      return this._token.signJwt(payload, this._tokenSecretKey, '2h');
     } catch {
       throw new Error('Failed to generate an refresh token');
     }
   }
 
-  public async verifyRefreshToken<T>(jwt: string, csrf: string): Promise<T> {
-    const payload = await this._token.verifyJwt<T & { csrf: string }>(
-      jwt,
-      this._tokenSecretKey
-    );
-    const verifyCsrf = this._token.compareEncrypted(csrf, payload.csrf);
-
-    if (!verifyCsrf) {
-      throw new Error('Invalid csrf refresh token');
-    } else {
-      const result: T & { csrf?: string } = payload;
-      delete result.csrf;
-      return result;
-    }
+  public async verifyToken<T>(token: string): Promise<T> {
+    return await this._token.verifyJwt<T>(token, this._tokenSecretKey);
   }
 }

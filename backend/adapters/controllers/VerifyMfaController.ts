@@ -1,12 +1,10 @@
 import { VerifyMfa } from '@useCases';
-import { JWT_ACCESS_TOKEN_NAME } from '@utils';
 import { IncomingHttpHeaders } from 'http';
 
 type APIVerifyMfaInput = {
   params: unknown;
   headers?: IncomingHttpHeaders;
   body: VerifyMfa.VerifyMfaRequestDTO;
-  cookies: { [key: string]: string };
 };
 
 export class VerifyMfaController {
@@ -25,13 +23,10 @@ export class VerifyMfaController {
     const request: VerifyMfa.VerifyMfaRequestDTO = {
       code: this._input.body.code,
     };
-    const jwtAccessToken = this._input.cookies?.[JWT_ACCESS_TOKEN_NAME];
-    const csrfAccessToken = this._input.headers?.['x-csrf-token'];
+    const authHeader = this._input.headers?.['authorization'];
+    const token =
+      authHeader?.split(' ')[0] === 'Bearer' ? authHeader?.split(' ')[1] : '';
 
-    await this._verifyMfaInteractor.execute(
-      request,
-      jwtAccessToken,
-      csrfAccessToken as string
-    );
+    await this._verifyMfaInteractor.execute(request, token);
   }
 }

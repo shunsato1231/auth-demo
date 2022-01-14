@@ -66,6 +66,7 @@ export class SignUpInteractor {
 
     return this._presenter.show({
       statusCode: 200,
+      success: {},
     });
   }
 }

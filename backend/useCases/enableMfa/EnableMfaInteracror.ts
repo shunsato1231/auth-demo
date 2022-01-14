@@ -18,10 +18,9 @@ export class EnableMfaInteractor {
 
   public async execute(
     data: EnableMfaRequestDTO,
-    jwtAccessToken: string,
-    csrfAccessToken: string
+    accessToken: string
   ): Promise<void> {
-    if (!jwtAccessToken || !csrfAccessToken) {
+    if (!accessToken) {
       return this._presenter.show({
         statusCode: 401,
         failured: {
@@ -33,10 +32,7 @@ export class EnableMfaInteractor {
     }
     let id;
     try {
-      const payload = await this._gateway.verifyAccessToken<IPayload>(
-        jwtAccessToken,
-        csrfAccessToken
-      );
+      const payload = await this._gateway.verifyToken<IPayload>(accessToken);
       id = payload.id;
     } catch (err) {
       return this._presenter.show({
@@ -140,13 +136,13 @@ export class EnableMfaInteractor {
     }
 
     const updatedUser = updatedUserResult.value;
-    let accessToken;
+    let newAccessToken;
 
     try {
       this._gateway.startTransaction();
       await this._gateway.save(updatedUser);
       await this._gateway.endTransaction();
-      accessToken = await this._gateway.createAccessToken({
+      newAccessToken = await this._gateway.createAccessToken({
         id: user.id.toString(),
         mfaVerified: true,
       });
@@ -163,7 +159,7 @@ export class EnableMfaInteractor {
 
     return this._presenter.show({
       statusCode: 200,
-      accessToken,
+      success: { accessToken: newAccessToken },
     });
   }
 }

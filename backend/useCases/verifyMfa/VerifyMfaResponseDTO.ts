@@ -1,12 +1,7 @@
 import { IError } from '@utils';
 
-export interface IToken {
-  jwt: string;
-  csrf: string;
-}
 export interface VerifyMfaResponseDTO {
   statusCode: number;
-  success?: string;
-  token?: IToken;
+  success?: { accessToken: string };
   failured?: IError;
 }

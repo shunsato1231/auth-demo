@@ -6,12 +6,10 @@ import VerifyMfa from '@infrastructure/action/VerifyMfa';
 import EnableMfa from '@infrastructure/action/EnableMfa';
 import GetMfaQrCode from '@infrastructure/action/GetMfaQrCode';
 import RefreshToken from '@infrastructure/action/RefreshToken';
-import SignOut from '@infrastructure/action/SignOut';
 
 const router = Router();
 router.route('/signup').post(SignUp);
 router.route('/signin').post(SignIn);
-router.route('/signout').post(SignOut);
 router.route('/mfa_setting_code').get(GetMfaSettingCode);
 router.route('/verify_mfa').post(VerifyMfa);
 router.route('/enable_mfa').post(EnableMfa);

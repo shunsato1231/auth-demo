@@ -14,16 +14,10 @@ export class RefreshTokenInteractor {
     this._presenter = presenter;
   }
 
-  public async execute(
-    jwtRefreshToken: string,
-    csrfRefreshToken: string
-  ): Promise<void> {
+  public async execute(refreshToken: string): Promise<void> {
     let id;
     try {
-      const payload = await this._gateway.verifyRefreshToken(
-        jwtRefreshToken,
-        csrfRefreshToken
-      );
+      const payload = await this._gateway.verifyToken(refreshToken);
       id = payload.id;
     } catch (err) {
       return this._presenter.show({
@@ -61,7 +55,7 @@ export class RefreshTokenInteractor {
 
       return this._presenter.show({
         statusCode: 200,
-        token: {
+        success: {
           accessToken,
           refreshToken,
         },

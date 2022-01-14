@@ -67,8 +67,6 @@ export class SignInInteractor {
         success: {
           email: user.email,
           mfaEnabled: user.mfaEnabled,
-        },
-        token: {
           accessToken,
           refreshToken,
         },

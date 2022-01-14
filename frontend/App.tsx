@@ -6,6 +6,7 @@ import { MfaSettingRoute } from '~/components/routes/MfaSettingRoute';
 
 import { Provider } from 'react-redux';
 import { store } from '~/store';
+
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '~/theme/default';
 import { CssBaseline } from '@mui/material';

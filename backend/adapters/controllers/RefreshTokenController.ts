@@ -1,5 +1,4 @@
 import { RefreshToken } from '@useCases';
-import { JWT_REFRESH_TOKEN_NAME } from '@utils';
 import { IncomingHttpHeaders } from 'http';
 
 type APIRefreshTokenInput = {
@@ -22,12 +21,10 @@ export class RefreshTokenController {
   }
 
   async run(): Promise<void> {
-    const jwtRefreshToken = this._input.cookies?.[JWT_REFRESH_TOKEN_NAME];
-    const csrfRefreshToken = this._input.headers?.['x-csrf-token'];
+    const authHeader = this._input.headers?.['authorization'];
+    const token =
+      authHeader?.split(' ')[0] === 'Bearer' ? authHeader?.split(' ')[1] : '';
 
-    await this._enableMfaInteractor.execute(
-      jwtRefreshToken,
-      csrfRefreshToken as string
-    );
+    await this._enableMfaInteractor.execute(token);
   }
 }

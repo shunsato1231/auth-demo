@@ -2,6 +2,6 @@ import { IError } from '@utils';
 
 export interface SignUpResponseDTO {
   statusCode: number;
-  success?: undefined;
+  success?: Record<string, never>;
   failured?: IError;
 }

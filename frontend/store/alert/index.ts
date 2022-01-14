@@ -8,6 +8,7 @@ export interface AlertState {
   alert: {
     message: string;
     severity: Severity;
+    errorStatus?: string;
   };
 }
 
@@ -26,9 +27,10 @@ const slice = createSlice({
     setLoading: (state, { payload }) => {
       state.loading = payload;
     },
-    setAlert: (state, { payload: { message, severity } }) => {
+    setAlert: (state, { payload: { message, severity, errorStatus } }) => {
       state.alert.severity = severity;
       state.alert.message = message;
+      state.alert.errorStatus = errorStatus;
     },
   },
 });
@@ -44,6 +46,9 @@ export const loadingSelector = (state: RootState): boolean =>
 
 export const messageSelector = (state: RootState): string =>
   state.alertReducer.alert.message;
+
+export const errorStatusSelector = (state: RootState): string | undefined =>
+  state.alertReducer.alert.errorStatus;
 
 export const severitySelector = (state: RootState): Severity =>
   state.alertReducer.alert.severity;

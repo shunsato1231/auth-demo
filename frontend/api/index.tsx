@@ -1,22 +1,13 @@
-import {
-  CSRF_ACCESS_TOKEN_NAME,
-  CSRF_REFRESH_TOKEN_NAME,
-  IError,
-} from '@utils';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { getCookie } from '~/utils/getCookie';
-
-export interface Error {
-  field: string;
-  code: string;
-  message: string;
-}
-
 export interface ErrorResponse {
   resource: string;
   code: string;
   message: string;
-  errors?: [Error];
+  errors?: Array<{
+    field: string;
+    code: string;
+    message: string;
+  }>;
+  errorStatus?: string;
 }
 
 export interface User {
@@ -25,154 +16,126 @@ export interface User {
   token: string;
 }
 
-const http = axios.create({
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json; charset=UTF-8',
-    'X-Requested-With': 'XMLHttpRequest',
-  },
-});
-
-const getRefreshToken = () =>
-  http
-    .post(
-      'api/auth/refresh_token',
-      {},
-      {
-        withCredentials: true,
-        headers: { 'X-CSRF-TOKEN': getCookie(CSRF_REFRESH_TOKEN_NAME) || '' },
-      }
-    )
-    .then(() => getCookie(CSRF_ACCESS_TOKEN_NAME));
-
-let refreshTokenPromise: Promise<string | undefined> | null;
-
-http.interceptors.response.use(
-  (res) => res,
-  async (error) => {
-    if (
-      error.response.data.code !== 'invalid_token' ||
-      error.response.data.resource === 'refresh_token' ||
-      error.config._retry
-    ) {
-      return Promise.reject(error);
-    }
-
-    if (!refreshTokenPromise) {
-      error.config._retry = true;
-      refreshTokenPromise = getRefreshToken().then((token) => {
-        refreshTokenPromise = null;
-        return token;
-      });
-    }
-
-    return refreshTokenPromise.then((token) => {
-      error.config.headers['X-CSRF-TOKEN'] = token;
-      return http.request(error.config);
-    });
+const fetchAPI = async (
+  url: string,
+  options: { [key: string]: unknown },
+  ms: number,
+  abortMessage: string,
+  abortSignal?: AbortSignal
+) => {
+  let errorMessage = '';
+  const controller = new AbortController();
+  const timeout = setTimeout(() => {
+    errorMessage = 'サーバからの応答がありません';
+    controller.abort();
+  }, ms);
+  if (abortSignal) {
+    abortSignal.addEventListener('abort', () => controller.abort());
+    errorMessage = abortMessage;
   }
-);
+  const promise = window.fetch(url, { signal: controller.signal, ...options });
+  return promise
+    .finally(() => clearTimeout(timeout))
+    .catch((err) => {
+      return err;
+    })
+    .then((res) => handleError(res, url, errorMessage));
+};
 
-const get = async <T extends unknown>(
+export const get = async (
   url: string,
   params?: { [key: string]: unknown },
-  timeout?: number,
-  setCsrfAccessToken = true
-) => {
-  const config: { [index: string]: unknown } = {};
-  const XCsrfTokenHeader = {
-    'X-CSRF-TOKEN': getCookie(CSRF_ACCESS_TOKEN_NAME) || '',
+  ms = 5000,
+  abortSignal?: AbortSignal,
+  abortMessage = '通信が中断されました'
+): Promise<unknown> => {
+  const options: { [index: string]: unknown } = {};
+  options.method = 'GET';
+  options.headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'X-Requested-With': 'XMLHttpRequest',
   };
+  if (params) options.params = JSON.stringify(params);
 
-  if (setCsrfAccessToken) config.headers = XCsrfTokenHeader;
-  if (params) config.params = params;
-  if (timeout) config.timeout = timeout;
-
-  return http.get<unknown, AxiosResponse<T>>(url, config);
+  return fetchAPI(url, options, ms, abortMessage, abortSignal);
 };
 
-const post = async <T extends unknown>(
+export const post = async (
   url: string,
-  params = {},
-  timeout?: number,
-  setCsrfAccessToken = true
-) => {
-  const config: { [index: string]: unknown } = {};
-  const XCsrfTokenHeader = {
-    'X-CSRF-TOKEN': getCookie(CSRF_ACCESS_TOKEN_NAME) || '',
+  body?: { [key: string]: unknown },
+  ms = 5000,
+  abortSignal?: AbortSignal,
+  abortMessage = '通信が中断されました'
+): Promise<unknown> => {
+  const options: { [index: string]: unknown } = {};
+  options.method = 'POST';
+  options.headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'X-Requested-With': 'XMLHttpRequest',
   };
+  if (body) options.body = JSON.stringify(body);
 
-  if (setCsrfAccessToken) config.headers = XCsrfTokenHeader;
-  if (timeout) config.timeout = timeout;
-
-  return http.post<unknown, AxiosResponse<T>>(url, params, config);
+  return fetchAPI(url, options, ms, abortMessage, abortSignal);
 };
 
-const handleError = (err: unknown) => {
-  if (axios.isAxiosError(err)) {
-    throw (err as AxiosError<IError>).response?.data;
-  } else {
-    throw err;
+const handleError = async (
+  res: Response,
+  url: string,
+  errorMessage?: string
+) => {
+  if (res.ok) {
+    return res.json();
   }
+
+  let error;
+
+  try {
+    await res.json().then((err) => {
+      error = err;
+    });
+  } catch {
+    let errorStatus;
+    switch (errorMessage) {
+      case 'サーバからの応答がありません':
+        errorStatus = '[504] Gateway Timeout';
+        break;
+      default:
+        errorStatus = res?.status ? `[${res.status}] ${res.statusText}` : '';
+        break;
+    }
+
+    error = {
+      resource: url,
+      code: res.status || 'unexpected_failure',
+      message: errorMessage || 'エラーが発生しました。',
+      errorStatus,
+    };
+  }
+
+  throw error;
 };
 
 export default {
   signUp: async (email: string, password: string): Promise<User> => {
-    try {
-      const res = await post<User>('/api/auth/signUp', { email, password });
-      const user = res.data;
-      return user;
-    } catch (err) {
-      return handleError(err);
-    }
+    const res = await post('/api/auth/signUp', { email, password });
+    return res as User;
   },
   signIn: async (email: string, password: string): Promise<User> => {
-    try {
-      const res = await post<User>('/api/auth/signIn', { email, password });
-      const user = res.data;
-      return user;
-    } catch (err) {
-      return handleError(err);
-    }
-  },
-  signOut: async (): Promise<void> => {
-    try {
-      await post('/api/auth/signout');
-    } catch (err) {
-      return handleError(err);
-    }
+    const res = await post('/api/auth/signIn', { email, password });
+    return res as User;
   },
   verifyMfa: async (code: string): Promise<void> => {
-    try {
-      await post<string>('/api/auth/verify_mfa', { code });
-    } catch (err) {
-      return handleError(err);
-    }
+    await post('/api/auth/verify_mfa', { code });
   },
   getMfaQr: async (): Promise<string> => {
-    try {
-      const res = await get<string>('/api/auth/mfa_qr_code');
-      const qrCode = res.data;
-
-      return qrCode;
-    } catch (err) {
-      return handleError(err);
-    }
+    const res = await get('/api/auth/mfa_qr_code');
+    return res as string;
   },
   getMfaSettingCode: async (): Promise<string> => {
-    try {
-      const res = await get<string>('/api/auth/mfa_setting_code');
-      const code = res.data;
-      return code;
-    } catch (err) {
-      return handleError(err);
-    }
+    const res = await get('/api/auth/mfa_setting_code');
+    return res as string;
   },
   enableMfa: async (code1: string, code2: string): Promise<void> => {
-    try {
-      await post<string>('/api/auth/enable_mfa', { code1, code2 });
-    } catch (err) {
-      return handleError(err);
-    }
+    await post('/api/auth/enable_mfa', { code1, code2 });
   },
 };
